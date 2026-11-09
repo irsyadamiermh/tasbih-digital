@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tasbih Digital</title>
+<meta name="description" content="A simple, beautiful digital tasbih (dhikr counter) that runs in your browser and remembers your count.">
+<meta name="theme-color" content="#0a1f1b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230f2e28' stroke='%23d4af37' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f1e4;
+    --bg2: #ece3cb;
+    --surface: rgba(255, 255, 255, .55);
+    --line: rgba(140, 105, 20, .22);
+    --text: #1d2b26;
+    --muted: #5d6b63;
+    --gold: #a8801c;
+    --gold-soft: #c99a2e;
+    --bead-off: rgba(29, 43, 38, .14);
+    --btn-a: #2a8a69;
+    --btn-b: #145441;
+    --btn-text: #fff8e6;
+    --pattern: rgba(168, 128, 28, .10);
+    --shadow: 0 20px 50px -20px rgba(20, 84, 65, .45);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0a1f1b;
+      --bg2: #0f2e28;
+      --surface: rgba(255, 255, 255, .04);
+      --line: rgba(212, 175, 55, .20);
+      --text: #f2ead3;
+      --muted: #9fb2a6;
+      --gold: #d4af37;
+      --gold-soft: #f0d77a;
+      --bead-off: rgba(242, 234, 211, .12);
+      --btn-a: #1f7a5c;
+      --btn-b: #0b3a2f;
+      --btn-text: #fff3cf;
+      --pattern: rgba(212, 175, 55, .07);
+      --shadow: 0 25px 60px -20px rgba(0, 0, 0, .7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a1f1b; --bg2: #0f2e28; --surface: rgba(255,255,255,.04); --line: rgba(212,175,55,.20);
+    --text: #f2ead3; --muted: #9fb2a6; --gold: #d4af37; --gold-soft: #f0d77a; --bead-off: rgba(242,234,211,.12);
+    --btn-a: #1f7a5c; --btn-b: #0b3a2f; --btn-text: #fff3cf; --pattern: rgba(212,175,55,.07);
+    --shadow: 0 25px 60px -20px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100dvh;
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* soft glow at the top, then the geometric pattern tinted to the theme */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background: radial-gradient(ellipse at 50% -10%, var(--bg2), transparent 60%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-color: var(--pattern);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='black' stroke-width='1.2'%3E%3Crect x='20' y='20' width='32' height='32'/%3E%3Crect x='20' y='20' width='32' height='32' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E") repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='black' stroke-width='1.2'%3E%3Crect x='20' y='20' width='32' height='32'/%3E%3Crect x='20' y='20' width='32' height='32' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+
+  button { font: inherit; color: inherit; }
+  svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  .app {
+    max-width: 480px; margin: 0 auto;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+  }
+
+  /* header */
+  .top { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: .2px; }
+  .brand svg { color: var(--gold); width: 22px; height: 22px; }
+  .brand .dim { color: var(--muted); font-weight: 500; }
+  .icons { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--surface); display: grid; place-items: center; cursor: pointer;
+    color: var(--gold); transition: background .2s, color .2s, transform .1s;
+  }
+  .icon-btn:active { transform: scale(.94); }
+  .icon-btn[aria-pressed="false"] { color: var(--muted); }
+  .icon-btn[aria-pressed="false"] .on-only, .icon-btn[aria-pressed="true"] .off-only { display: none; }
+
+  /* dhikr card */
+  .dhikr-card { text-align: center; min-height: 128px; display: flex; flex-direction: column; justify-content: center; }
+  .ar {
+    font-family: "Amiri", serif; font-size: clamp(34px, 10vw, 46px); line-height: 1.5;
+    margin: 0; color: var(--gold);
+  }
+  .tr { margin: 2px 0 0; font-weight: 700; font-size: 17px; }
+  .en { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+  .swap { animation: swap .45s ease; }
+  @keyframes swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* dial */
+  .dial { position: relative; width: min(82vw, 330px); aspect-ratio: 1; }
+  .dial svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .ring .track { fill: none; stroke: var(--line); stroke-width: 1.5; }
+  .ring .bead {
+    fill: var(--bead-off); transform-box: fill-box; transform-origin: center;
+    transition: fill .25s, transform .25s;
+  }
+  .ring .bead.on { fill: var(--gold); }
+  .ring .bead.cur { transform: scale(1.45); fill: var(--gold-soft); filter: drop-shadow(0 0 6px var(--gold)); }
+  .dial.done .ring .bead.on { animation: glow 1s ease; }
+  @keyframes glow {
+    0% { filter: none; }
+    40% { filter: drop-shadow(0 0 8px var(--gold-soft)); transform: scale(1.3); }
+    100% { filter: none; }
+  }
+
+  .counter {
+    position: absolute; inset: 14%; border-radius: 50%; border: 2px solid var(--gold);
+    background: radial-gradient(circle at 35% 28%, var(--btn-a), var(--btn-b) 72%);
+    color: var(--btn-text); cursor: pointer; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: var(--shadow), inset 0 2px 0 rgba(255,255,255,.18), inset 0 -10px 30px rgba(0,0,0,.25);
+    touch-action: manipulation; user-select: none; -webkit-user-select: none;
+    transition: transform .08s ease;
+  }
+  .counter:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 6px; }
+  .counter.press, .counter:active { transform: scale(.965); }
+  .count {
+    font-size: clamp(58px, 19vw, 84px); font-weight: 800; line-height: 1;
+    font-variant-numeric: tabular-nums; letter-spacing: -2px;
+  }
+  .count.long { font-size: clamp(42px, 13vw, 60px); letter-spacing: -1px; }
+  .count.bump { animation: bump .18s ease; }
+  @keyframes bump { 50% { transform: scale(1.08); } }
+  .goal { margin-top: 6px; font-size: 15px; font-weight: 600; opacity: .7; }
+  .dial.done .counter { animation: flash 1s ease; }
+  @keyframes flash { 30% { box-shadow: 0 0 0 10px rgba(212,175,55,.25), var(--shadow); } }
+
+  .ripple {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    width: 40px; height: 40px; margin: -20px 0 0 -20px;
+    background: rgba(255, 236, 170, .35); animation: ripple .6s ease-out forwards;
+  }
+  @keyframes ripple { to { transform: scale(9); opacity: 0; } }
+
+  .meta { margin: -4px 0 0; color: var(--muted); font-size: 14px; text-align: center; min-height: 20px; }
+
+  .actions { display: flex; gap: 10px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-weight: 600; font-size: 14px;
+    transition: transform .1s, opacity .2s;
+  }
+  .pill:active { transform: scale(.96); }
+  .pill:disabled { opacity: .4; cursor: default; }
+
+  /* panel */
+  .panel {
+    width: 100%; padding: 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .panel h2 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .panel h2:not(:first-child) { margin-top: 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent;
+    cursor: pointer; font-size: 14px; font-weight: 600; transition: background .2s, color .2s, border-color .2s;
+  }
+  .chip.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+  .chips.muted .chip { opacity: .5; }
+
+  .switch { display: flex; align-items: center; gap: 12px; margin-top: 18px; cursor: pointer; }
+  .switch input { position: absolute; opacity: 0; pointer-events: none; }
+  .track-sw {
+    width: 46px; height: 28px; border-radius: 999px; background: var(--bead-off); position: relative; flex: none;
+    transition: background .2s;
+  }
+  .track-sw::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.25); transition: transform .2s;
+  }
+  .switch input:checked + .track-sw { background: var(--gold); }
+  .switch input:checked + .track-sw::after { transform: translateX(18px); }
+  .switch input:focus-visible + .track-sw { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
+  .switch-text { display: flex; flex-direction: column; }
+  .switch-text strong { font-size: 15px; }
+  .switch-text small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+  /* stats */
+  .stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stats div {
+    padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .stats span { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }
+  .stats small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+  .hint { margin: 0; font-size: 12.5px; color: var(--muted); }
+  kbd { font-family: inherit; font-size: 11.5px; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); }
+  @media (hover: none) { .hint { display: none; } }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
+    max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 14px;
+    background: var(--gold); color: var(--bg); font-weight: 700; font-size: 14px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* dialogs */
+  dialog {
+    border: 1px solid var(--line); border-radius: 20px; padding: 22px; width: min(340px, calc(100% - 32px));
+    background: var(--bg); color: var(--text); box-shadow: 0 30px 80px rgba(0,0,0,.4);
+  }
+  dialog::backdrop { background: rgba(0,0,0,.45); backdrop-filter: blur(2px); }
+  dialog h3 { margin: 0 0 6px; font-size: 18px; }
+  dialog p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  dialog input {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+    color: var(--text); font: inherit; font-size: 18px; font-weight: 700; margin-bottom: 16px;
+  }
+  dialog input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .dlg-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn { padding: 10px 18px; border-radius: 12px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-weight: 700; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13.5A8.5 8.5 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z"/><path d="m18 3 .7 1.6L20.3 5l-1.6.7L18 7.3l-.7-1.6L15.7 5l1.6-.4z"/></svg>
+      <span>Tasbih<span class="dim"> Digital</span></span>
+    </div>
+    <div class="icons">
+      <button class="icon-btn" id="soundBtn" aria-pressed="true" aria-label="Sound" title="Sound">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="on-only" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="off-only" d="m16 9 6 6m0-6-6 6"/></svg>
+      </button>
+      <button class="icon-btn" id="vibBtn" aria-pressed="true" aria-label="Vibration" title="Vibration">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path class="on-only" d="M3 9v6M21 9v6"/><path class="off-only" d="M3 3l18 18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="dhikr-card" id="card" aria-live="polite">
+    <p class="ar" id="ar" lang="ar" dir="rtl"></p>
+    <p class="tr" id="tr"></p>
+    <p class="en" id="en"></p>
+  </section>
+
+  <div class="dial" id="dial">
+    <svg class="ring" id="ring" viewBox="-150 -150 300 300" aria-hidden="true"></svg>
+    <button class="counter" id="counter" aria-label="Tap to count">
+      <span class="count" id="count">0</span>
+      <span class="goal" id="goal">/ 33</span>
+    </button>
+  </div>
+  <p class="meta" id="meta"></p>
+
+  <div class="actions">
+    <button class="pill" id="undoBtn" disabled>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Undo
+    </button>
+    <button class="pill" id="resetBtn">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset
+    </button>
+  </div>
+
+  <section class="panel">
+    <h2>Dhikr</h2>
+    <div class="chips" id="dhikrChips"></div>
+    <h2>Target</h2>
+    <div class="chips" id="targetChips"></div>
+    <label class="switch">
+      <input type="checkbox" id="seqToggle">
+      <span class="track-sw"></span>
+      <span class="switch-text">
+        <strong>After-prayer tasbih</strong>
+        <small>33 Subhanallah · 33 Alhamdulillah · 34 Allahu Akbar</small>
+      </span>
+    </label>
+  </section>
+
+  <footer class="stats">
+    <div><span id="todayN">0</span><small>Today</small></div>
+    <div><span id="lifeN">0</span><small>All time</small></div>
+  </footer>
+  <p class="hint">Press <kbd>Space</kbd> to count, <kbd>Backspace</kbd> to undo.</p>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<dialog id="resetDlg">
+  <form method="dialog">
+    <h3>Reset counter?</h3>
+    <p id="resetText">This sets the current count back to 0.</p>
+    <div class="dlg-actions">
+      <button class="btn" value="cancel">Cancel</button>
+      <button class="btn primary" value="ok">Reset</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="targetDlg">
+  <form method="dialog">
+    <h3>Custom target</h3>
+    <p>How many times for each round?</p>
+    <input id="targetInput" type="number" inputmode="numeric" min="1" max="9999" placeholder="e.g. 1000">
+    <div class="dlg-actions">
+      <button class="btn" value="cancel">Cancel</button>
+      <button class="btn primary" value="ok">Set</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  "use strict";
+
+  const DHIKR = [
+    { id: "subhanallah",   ar: "سُبْحَانَ ٱللَّٰهِ",              tr: "Subhanallah",        en: "Glory be to Allah" },
+    { id: "alhamdulillah", ar: "ٱلْحَمْدُ لِلَّٰهِ",               tr: "Alhamdulillah",      en: "All praise is for Allah" },
+    { id: "allahuakbar",   ar: "ٱللَّٰهُ أَكْبَرُ",                tr: "Allahu Akbar",       en: "Allah is the Greatest" },
+    { id: "tahlil",        ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ",       tr: "La ilaha illallah",  en: "There is no god but Allah" },
+    { id: "istighfar",     ar: "أَسْتَغْفِرُ ٱللَّٰهَ",            tr: "Astaghfirullah",     en: "I seek forgiveness from Allah" },
+    { id: "salawat",       ar: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", tr: "Selawat",            en: "O Allah, send blessings upon Muhammad" }
+  ];
+  const SEQ = [
+    { id: "subhanallah", n: 33 },
+    { id: "alhamdulillah", n: 33 },
+    { id: "allahuakbar", n: 34 }
+  ];
+  const PRESET_TARGETS = [33, 99, 100, 0]; // 0 = unlimited
+  const KEY = "tasbih-digital-v1";
+  const MAX_BEADS = 33;
+
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    card: $("card"), ar: $("ar"), tr: $("tr"), en: $("en"),
+    dial: $("dial"), ring: $("ring"), counter: $("counter"), count: $("count"), goal: $("goal"), meta: $("meta"),
+    undo: $("undoBtn"), reset: $("resetBtn"), dhikrChips: $("dhikrChips"), targetChips: $("targetChips"),
+    seq: $("seqToggle"), today: $("todayN"), life: $("lifeN"), toast: $("toast"),
+    sound: $("soundBtn"), vib: $("vibBtn"),
+    resetDlg: $("resetDlg"), resetText: $("resetText"), targetDlg: $("targetDlg"), targetInput: $("targetInput")
+  };
+
+  const defaults = () => ({
+    dhikr: "subhanallah", target: 33, counts: {},
+    seq: false, seqStep: 0, seqCount: 0,
+    sound: true, vibrate: true,
+    todayDate: "", today: 0, lifetime: 0
+  });
+
+  // ---------- storage ----------
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) return Object.assign(defaults(), JSON.parse(raw));
+    } catch (e) { /* storage unavailable */ }
+    return defaults();
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ }
+  }
+
+  let S = load();
+  const undoStack = [];
+  let lastCardId = null;
+  let advanceTimer = null;
+
+  const byId = (id) => DHIKR.find((d) => d.id === id) || DHIKR[0];
+  const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+  function rollDay() { const t = todayStr(); if (S.todayDate !== t) { S.todayDate = t; S.today = 0; } }
+  const fmt = (n) => n.toLocaleString("en-US");
+
+  function current() {
+    if (S.seq) {
+      const st = SEQ[S.seqStep] || SEQ[0];
+      return { d: byId(st.id), target: st.n, count: S.seqCount };
+    }
+    return { d: byId(S.dhikr), target: S.target, count: S.counts[S.dhikr] || 0 };
+  }
+
+  // ---------- feedback ----------
+  let actx = null;
+  function tone(freq, dur, vol = 0.06, type = "sine", delay = 0) {
+    if (!S.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const t = actx.currentTime + delay;
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g).connect(actx.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) { /* audio unavailable */ }
+  }
+  function buzz(pattern) { if (S.vibrate && navigator.vibrate) { try { navigator.vibrate(pattern); } catch (e) {} } }
+
+  let toastTimer = null;
+  function toast(msg) {
+    el.toast.textContent = msg;
+    el.toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
+  }
+
+  function celebrate() {
+    el.dial.classList.remove("done");
+    void el.dial.offsetWidth;
+    el.dial.classList.add("done");
+    tone(660, 0.3, 0.07); tone(990, 0.45, 0.06, "sine", 0.12);
+    buzz([70, 50, 70]);
+  }
+
+  // ---------- counting ----------
+  function snapshot() {
+    undoStack.push(JSON.stringify({ counts: S.counts, seqStep: S.seqStep, seqCount: S.seqCount, today: S.today, lifetime: S.lifetime }));
+    if (undoStack.length > 300) undoStack.shift();
+  }
+
+  function advanceSeq() {
+    clearTimeout(advanceTimer); advanceTimer = null;
+    S.seqStep = S.seqStep < SEQ.length - 1 ? S.seqStep + 1 : 0;
+    S.seqCount = 0;
+    save(); render();
+  }
+
+  function increment() {
+    rollDay();
+    if (S.seq && S.seqCount >= SEQ[S.seqStep].n) advanceSeq(); // tapped before auto-advance
+    snapshot();
+    S.today++; S.lifetime++;
+
+    let done = false;
+    if (S.seq) {
+      S.seqCount++;
+      const st = SEQ[S.seqStep];
+      if (S.seqCount >= st.n) {
+        done = true;
+        if (S.seqStep < SEQ.length - 1) {
+          toast(`${st.n}× ${byId(st.id).tr} done → ${byId(SEQ[S.seqStep + 1].id).tr}`);
+        } else {
+          toast("Alhamdulillah, after-prayer tasbih complete (100)");
+        }
+        advanceTimer = setTimeout(advanceSeq, 1100);
+      }
+    } else {
+      const n = (S.counts[S.dhikr] || 0) + 1;
+      S.counts = Object.assign({}, S.counts, { [S.dhikr]: n });
+      if (S.target > 0 && n % S.target === 0) {
+        done = true;
+        const r = n / S.target;
+        toast(`${S.target}× ${byId(S.dhikr).tr} complete${r > 1 ? ` · round ${r}` : ""}`);
+      }
+    }
+
+    if (done) celebrate();
+    else { tone(1250, 0.05, 0.035, "triangle"); buzz(12); }
+
+    save(); render(true);
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    clearTimeout(advanceTimer); advanceTimer = null;
+    Object.assign(S, JSON.parse(undoStack.pop()));
+    buzz(8);
+    save(); render();
+  }
+
+  function tap() {
+    increment();
+    el.counter.classList.add("press");
+    setTimeout(() => el.counter.classList.remove("press"), 90);
+  }
+
+  // ---------- ring ----------
+  let beadCount = -1, beads = [];
+  function buildRing(n) {
+    if (n === beadCount) return;
+    beadCount = n;
+    const R = 136;
+    let h = `<circle class="track" r="${R}"/>`;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+      h += `<circle class="bead" cx="${(R * Math.cos(a)).toFixed(2)}" cy="${(R * Math.sin(a)).toFixed(2)}" r="6.5"/>`;
+    }
+    el.ring.innerHTML = h;
+    beads = Array.from(el.ring.querySelectorAll(".bead"));
+  }
+
+  // ---------- render ----------
+  function render(bump = false) {
+    rollDay();
+    const { d, target, count } = current();
+
+    if (lastCardId !== d.id) {
+      el.ar.textContent = d.ar; el.tr.textContent = d.tr; el.en.textContent = d.en;
+      if (lastCardId !== null) { el.card.classList.remove("swap"); void el.card.offsetWidth; el.card.classList.add("swap"); }
+      lastCardId = d.id;
+    }
+
+    let shown, lit, n;
+    if (target > 0) {
+      if (S.seq) shown = count;
+      else { shown = count % target; if (shown === 0 && count > 0) shown = target; }
+      n = Math.min(target, MAX_BEADS);
+      lit = Math.round((shown / target) * n);
+      el.goal.textContent = `/ ${fmt(target)}`;
+    } else {
+      shown = count;
+      n = MAX_BEADS;
+      lit = count === 0 ? 0 : (count % n || n);
+      el.goal.textContent = "no limit";
+    }
+    buildRing(n);
+    beads.forEach((b, i) => { b.classList.toggle("on", i < lit); b.classList.toggle("cur", i === lit - 1); });
+
+    const s = fmt(shown);
+    el.count.textContent = s;
+    el.count.classList.toggle("long", s.length > 4);
+    if (bump) { el.count.classList.remove("bump"); void el.count.offsetWidth; el.count.classList.add("bump"); }
+
+    if (S.seq) {
+      el.meta.textContent = `Step ${S.seqStep + 1} of 3 · after-prayer tasbih`;
+    } else if (target > 0) {
+      const rounds = Math.floor(count / target);
+      el.meta.textContent = rounds > 0
+        ? `${rounds} round${rounds > 1 ? "s" : ""} complete · ${fmt(count)} total`
+        : `${fmt(count)} total`;
+    } else {
+      el.meta.textContent = `${fmt(count)} total`;
+    }
+
+    el.today.textContent = fmt(S.today);
+    el.life.textContent = fmt(S.lifetime);
+    el.undo.disabled = undoStack.length === 0;
+    el.counter.setAttribute("aria-label", `${d.tr}, count ${shown}${target > 0 ? " of " + target : ""}. Tap to count.`);
+
+    // chips
+    el.dhikrChips.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", !S.seq && c.dataset.id === S.dhikr));
+    const isPreset = PRESET_TARGETS.includes(S.target);
+    el.targetChips.querySelectorAll(".chip").forEach((c) => {
+      if (c.dataset.t === "custom") {
+        c.textContent = isPreset ? "Custom" : `Custom · ${fmt(S.target)}`;
+        c.classList.toggle("active", !S.seq && !isPreset);
+      } else {
+        c.classList.toggle("active", !S.seq && Number(c.dataset.t) === S.target);
+      }
+    });
+    el.dhikrChips.classList.toggle("muted", S.seq);
+    el.targetChips.classList.toggle("muted", S.seq);
+    el.seq.checked = S.seq;
+    el.sound.setAttribute("aria-pressed", String(S.sound));
+    el.vib.setAttribute("aria-pressed", String(S.vibrate));
+  }
+
+  function exitSeq() {
+    if (!S.seq) return;
+    S.seq = false; clearTimeout(advanceTimer); advanceTimer = null;
+  }
+
+  function buildChips() {
+    DHIKR.forEach((d) => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.textContent = d.tr; b.dataset.id = d.id;
+      b.addEventListener("click", () => {
+        exitSeq(); S.dhikr = d.id; undoStack.length = 0; save(); render();
+      });
+      el.dhikrChips.append(b);
+    });
+    [...PRESET_TARGETS, "custom"].forEach((t) => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.dataset.t = String(t);
+      b.textContent = t === 0 ? "∞" : t === "custom" ? "Custom" : String(t);
+      if (t === 0) b.setAttribute("aria-label", "No limit");
+      b.addEventListener("click", () => {
+        if (t === "custom") {
+          el.targetInput.value = PRESET_TARGETS.includes(S.target) ? "" : S.target;
+          el.targetDlg.showModal();
+          return;
+        }
+        exitSeq(); S.target = t; save(); render();
+      });
+      el.targetChips.append(b);
+    });
+  }
+
+  // ---------- events ----------
+  el.counter.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const r = el.counter.getBoundingClientRect();
+    const sp = document.createElement("span");
+    sp.className = "ripple";
+    sp.style.left = `${e.clientX - r.left}px`; sp.style.top = `${e.clientY - r.top}px`;
+    el.counter.append(sp);
+    setTimeout(() => sp.remove(), 650);
+    increment();
+  });
+  el.counter.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  document.addEventListener("keydown", (e) => {
+    if (document.querySelector("dialog[open]") || e.repeat) return;
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    const free = e.target === el.counter || e.target === document.body;
+    if ((e.code === "Space" || e.key === "Enter") && free) { e.preventDefault(); tap(); }
+    else if (e.key === "Backspace") { e.preventDefault(); undo(); }
+  });
+
+  el.undo.addEventListener("click", undo);
+
+  el.reset.addEventListener("click", () => {
+    el.resetText.textContent = S.seq
+      ? "This restarts the after-prayer tasbih from the beginning."
+      : `This sets ${byId(S.dhikr).tr} back to 0. Your Today and All-time totals stay.`;
+    el.resetDlg.returnValue = "";
+    el.resetDlg.showModal();
+  });
+  el.resetDlg.addEventListener("close", () => {
+    if (el.resetDlg.returnValue !== "ok") return;
+    clearTimeout(advanceTimer); advanceTimer = null;
+    if (S.seq) { S.seqStep = 0; S.seqCount = 0; }
+    else { S.counts = Object.assign({}, S.counts, { [S.dhikr]: 0 }); }
+    undoStack.length = 0;
+    save(); render(); toast("Counter reset");
+  });
+
+  el.targetDlg.addEventListener("close", () => {
+    if (el.targetDlg.returnValue !== "ok") { el.targetDlg.returnValue = ""; return; }
+    el.targetDlg.returnValue = "";
+    const v = Math.floor(Number(el.targetInput.value));
+    if (!v || v < 1) { toast("Enter a number from 1 to 9999"); return; }
+    exitSeq(); S.target = Math.min(v, 9999); save(); render();
+  });
+
+  el.seq.addEventListener("change", () => {
+    clearTimeout(advanceTimer); advanceTimer = null;
+    S.seq = el.seq.checked; S.seqStep = 0; S.seqCount = 0;
+    undoStack.length = 0;
+    save(); render();
+  });
+
+  el.sound.addEventListener("click", () => { S.sound = !S.sound; save(); render(); if (S.sound) tone(1250, 0.05, 0.035, "triangle"); });
+  el.vib.addEventListener("click", () => { S.vibrate = !S.vibrate; save(); render(); buzz(20); });
+
+  // ---------- start ----------
+  buildChips();
+  render();
+})();
+</script>
+</body>
+</html>
