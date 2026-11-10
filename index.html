@@ -4,668 +4,1046 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tasbih Digital</title>
-<meta name="description" content="A simple, beautiful digital tasbih (dhikr counter) that runs in your browser and remembers your count.">
+<meta name="description" content="A complete digital tasbih: dhikr library, custom dhikr, wirid routines, Asmaul Husna, streaks and stats. Works offline.">
 <meta name="theme-color" content="#0a1f1b">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230f2e28' stroke='%23d4af37' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tasbih">
+<script>
+(function(){try{var s=JSON.parse(localStorage.getItem("tasbih-digital-v2")||"{}"),th=s.theme||"auto";if(th==="auto")th=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";var r=document.documentElement;r.dataset.theme=th;r.dataset.accent=s.accent||"emerald";}catch(e){}})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f1e4;
-    --bg2: #ece3cb;
-    --surface: rgba(255, 255, 255, .55);
-    --line: rgba(140, 105, 20, .22);
-    --text: #1d2b26;
-    --muted: #5d6b63;
-    --gold: #a8801c;
-    --gold-soft: #c99a2e;
-    --bead-off: rgba(29, 43, 38, .14);
-    --btn-a: #2a8a69;
-    --btn-b: #145441;
-    --btn-text: #fff8e6;
-    --pattern: rgba(168, 128, 28, .10);
-    --shadow: 0 20px 50px -20px rgba(20, 84, 65, .45);
+    --bg: #f6f1e4; --bg2: #ece3cb; --surface: rgba(255,255,255,.6); --line: rgba(140,105,20,.22);
+    --text: #1d2b26; --muted: #5d6b63; --gold: #a8801c; --gold-soft: #c99a2e;
+    --bead-off: rgba(29,43,38,.14); --btn-a: #2a8a69; --btn-b: #145441; --btn-text: #fff8e6;
+    --pattern: rgba(168,128,28,.10); --shadow: 0 20px 50px -20px rgba(0,0,0,.4); --nav: rgba(246,241,228,.92);
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0a1f1b;
-      --bg2: #0f2e28;
-      --surface: rgba(255, 255, 255, .04);
-      --line: rgba(212, 175, 55, .20);
-      --text: #f2ead3;
-      --muted: #9fb2a6;
-      --gold: #d4af37;
-      --gold-soft: #f0d77a;
-      --bead-off: rgba(242, 234, 211, .12);
-      --btn-a: #1f7a5c;
-      --btn-b: #0b3a2f;
-      --btn-text: #fff3cf;
-      --pattern: rgba(212, 175, 55, .07);
-      --shadow: 0 25px 60px -20px rgba(0, 0, 0, .7);
-    }
-  }
+  :root[data-accent="sapphire"] { --btn-a: #3577bd; --btn-b: #173d6b; }
+  :root[data-accent="maroon"]   { --btn-a: #a8455a; --btn-b: #5e1f2e; }
+  :root[data-accent="onyx"]     { --btn-a: #555; --btn-b: #1c1c1c; }
   :root[data-theme="dark"] {
-    --bg: #0a1f1b; --bg2: #0f2e28; --surface: rgba(255,255,255,.04); --line: rgba(212,175,55,.20);
-    --text: #f2ead3; --muted: #9fb2a6; --gold: #d4af37; --gold-soft: #f0d77a; --bead-off: rgba(242,234,211,.12);
-    --btn-a: #1f7a5c; --btn-b: #0b3a2f; --btn-text: #fff3cf; --pattern: rgba(212,175,55,.07);
-    --shadow: 0 25px 60px -20px rgba(0,0,0,.7);
+    --bg: #0a1f1b; --bg2: #0f2e28; --surface: rgba(255,255,255,.045); --line: rgba(212,175,55,.2);
+    --text: #f2ead3; --muted: #9fb2a6; --gold: #d4af37; --gold-soft: #f0d77a;
+    --bead-off: rgba(242,234,211,.12); --btn-a: #1f7a5c; --btn-b: #0b3a2f; --btn-text: #fff3cf;
+    --pattern: rgba(212,175,55,.07); --shadow: 0 25px 60px -20px rgba(0,0,0,.7); --nav: rgba(10,31,27,.92);
   }
+  :root[data-theme="dark"][data-accent="sapphire"] { --bg: #0a1526; --bg2: #10233f; --btn-a: #24609e; --btn-b: #0e2a4d; --muted: #9fadc2; --nav: rgba(10,21,38,.92); }
+  :root[data-theme="dark"][data-accent="maroon"]   { --bg: #1f0c12; --bg2: #33131c; --btn-a: #8a3246; --btn-b: #45141f; --muted: #c2a4aa; --nav: rgba(31,12,18,.92); }
+  :root[data-theme="dark"][data-accent="onyx"]     { --bg: #0c0c0c; --bg2: #1b1b1b; --btn-a: #3a3a3a; --btn-b: #111; --muted: #a8a8a8; --nav: rgba(12,12,12,.92); }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    min-height: 100dvh;
-    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-    color: var(--text);
-    background-color: var(--bg);
-    -webkit-tap-highlight-color: transparent;
+    min-height: 100dvh; font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    color: var(--text); background-color: var(--bg); -webkit-tap-highlight-color: transparent;
+    transition: background-color .3s;
   }
-  /* soft glow at the top, then the geometric pattern tinted to the theme */
   body::before {
     content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
     background: radial-gradient(ellipse at 50% -10%, var(--bg2), transparent 60%);
   }
   body::after {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
-    background-color: var(--pattern);
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background-color: var(--pattern);
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='black' stroke-width='1.2'%3E%3Crect x='20' y='20' width='32' height='32'/%3E%3Crect x='20' y='20' width='32' height='32' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E") repeat;
             mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='black' stroke-width='1.2'%3E%3Crect x='20' y='20' width='32' height='32'/%3E%3Crect x='20' y='20' width='32' height='32' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E") repeat;
   }
-
-  button { font: inherit; color: inherit; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
   svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-  .app {
-    max-width: 480px; margin: 0 auto;
-    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
-    display: flex; flex-direction: column; align-items: center; gap: 18px;
-  }
+  .app { max-width: 480px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom)); }
+  .view { display: flex; flex-direction: column; align-items: center; gap: 16px; animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-  /* header */
-  .top { width: 100%; display: flex; align-items: center; justify-content: space-between; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: .2px; }
+  .top { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
   .brand svg { color: var(--gold); width: 22px; height: 22px; }
   .brand .dim { color: var(--muted); font-weight: 500; }
-  .icons { display: flex; gap: 8px; }
-  .icon-btn {
-    width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line);
-    background: var(--surface); display: grid; place-items: center; cursor: pointer;
-    color: var(--gold); transition: background .2s, color .2s, transform .1s;
-  }
+  .top-right { display: flex; align-items: center; gap: 8px; }
+  .streak { display: inline-flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-weight: 800; font-size: 14px; color: var(--gold); }
+  .streak svg { width: 16px; height: 16px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; color: var(--gold); transition: transform .1s; }
   .icon-btn:active { transform: scale(.94); }
-  .icon-btn[aria-pressed="false"] { color: var(--muted); }
-  .icon-btn[aria-pressed="false"] .on-only, .icon-btn[aria-pressed="true"] .off-only { display: none; }
+  .icon-btn.sm { width: 34px; height: 34px; border-radius: 10px; color: var(--muted); }
 
-  /* dhikr card */
-  .dhikr-card { text-align: center; min-height: 128px; display: flex; flex-direction: column; justify-content: center; }
-  .ar {
-    font-family: "Amiri", serif; font-size: clamp(34px, 10vw, 46px); line-height: 1.5;
-    margin: 0; color: var(--gold);
-  }
+  /* counter */
+  .mode { display: inline-flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--gold); color: var(--bg); font-weight: 700; font-size: 13px; }
+  .mode button { width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.18); color: inherit; display: grid; place-items: center; }
+  .mode svg { width: 14px; height: 14px; }
+  .dhikr-card { text-align: center; min-height: 124px; display: flex; flex-direction: column; justify-content: center; }
+  .ar { font-family: "Amiri", serif; font-size: clamp(30px, 9vw, 44px); line-height: 1.55; margin: 0; color: var(--gold); }
+  .ar.long { font-size: clamp(22px, 6.4vw, 30px); }
   .tr { margin: 2px 0 0; font-weight: 700; font-size: 17px; }
   .en { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
-  .swap { animation: swap .45s ease; }
+  .swap { animation: swap .4s ease; }
   @keyframes swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  /* dial */
-  .dial { position: relative; width: min(82vw, 330px); aspect-ratio: 1; }
+  .dial { position: relative; width: min(80vw, 320px); aspect-ratio: 1; }
   .dial svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .ring .track { fill: none; stroke: var(--line); stroke-width: 1.5; }
-  .ring .bead {
-    fill: var(--bead-off); transform-box: fill-box; transform-origin: center;
-    transition: fill .25s, transform .25s;
-  }
+  .ring .bead { fill: var(--bead-off); transform-box: fill-box; transform-origin: center; transition: fill .25s, transform .25s; }
   .ring .bead.on { fill: var(--gold); }
   .ring .bead.cur { transform: scale(1.45); fill: var(--gold-soft); filter: drop-shadow(0 0 6px var(--gold)); }
   .dial.done .ring .bead.on { animation: glow 1s ease; }
-  @keyframes glow {
-    0% { filter: none; }
-    40% { filter: drop-shadow(0 0 8px var(--gold-soft)); transform: scale(1.3); }
-    100% { filter: none; }
-  }
-
+  @keyframes glow { 40% { filter: drop-shadow(0 0 8px var(--gold-soft)); transform: scale(1.3); } }
   .counter {
     position: absolute; inset: 14%; border-radius: 50%; border: 2px solid var(--gold);
-    background: radial-gradient(circle at 35% 28%, var(--btn-a), var(--btn-b) 72%);
-    color: var(--btn-text); cursor: pointer; overflow: hidden;
+    background: radial-gradient(circle at 35% 28%, var(--btn-a), var(--btn-b) 72%); color: var(--btn-text); overflow: hidden;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     box-shadow: var(--shadow), inset 0 2px 0 rgba(255,255,255,.18), inset 0 -10px 30px rgba(0,0,0,.25);
-    touch-action: manipulation; user-select: none; -webkit-user-select: none;
-    transition: transform .08s ease;
+    touch-action: manipulation; user-select: none; -webkit-user-select: none; transition: transform .08s ease;
   }
   .counter:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 6px; }
   .counter.press, .counter:active { transform: scale(.965); }
-  .count {
-    font-size: clamp(58px, 19vw, 84px); font-weight: 800; line-height: 1;
-    font-variant-numeric: tabular-nums; letter-spacing: -2px;
-  }
-  .count.long { font-size: clamp(42px, 13vw, 60px); letter-spacing: -1px; }
+  .count { font-size: clamp(56px, 18vw, 80px); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+  .count.long { font-size: clamp(40px, 12vw, 56px); letter-spacing: -1px; }
   .count.bump { animation: bump .18s ease; }
   @keyframes bump { 50% { transform: scale(1.08); } }
   .goal { margin-top: 6px; font-size: 15px; font-weight: 600; opacity: .7; }
   .dial.done .counter { animation: flash 1s ease; }
   @keyframes flash { 30% { box-shadow: 0 0 0 10px rgba(212,175,55,.25), var(--shadow); } }
-
-  .ripple {
-    position: absolute; border-radius: 50%; pointer-events: none;
-    width: 40px; height: 40px; margin: -20px 0 0 -20px;
-    background: rgba(255, 236, 170, .35); animation: ripple .6s ease-out forwards;
-  }
+  .ripple { position: absolute; border-radius: 50%; pointer-events: none; width: 40px; height: 40px; margin: -20px 0 0 -20px; background: rgba(255,236,170,.35); animation: ripple .6s ease-out forwards; }
   @keyframes ripple { to { transform: scale(9); opacity: 0; } }
-
   .meta { margin: -4px 0 0; color: var(--muted); font-size: 14px; text-align: center; min-height: 20px; }
 
-  .actions { display: flex; gap: 10px; }
-  .pill {
-    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px;
-    border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-weight: 600; font-size: 14px;
-    transition: transform .1s, opacity .2s;
-  }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 14px; transition: transform .1s, opacity .2s; }
   .pill:active { transform: scale(.96); }
   .pill:disabled { opacity: .4; cursor: default; }
+  .pill.gold { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+  .pill.wide { width: 100%; justify-content: center; padding: 13px 16px; }
+  .pill.danger { color: #c0392b; }
 
-  /* panel */
-  .panel {
-    width: 100%; padding: 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface);
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  }
-  .panel h2 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .panel { width: 100%; padding: 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); }
+  .panel h2, .h2 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
   .panel h2:not(:first-child) { margin-top: 18px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent;
-    cursor: pointer; font-size: 14px; font-weight: 600; transition: background .2s, color .2s, border-color .2s;
-  }
+  .chips.scroll { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  .chips.scroll::-webkit-scrollbar { display: none; }
+  .chip { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; font-size: 14px; font-weight: 600; white-space: nowrap; transition: background .2s, color .2s; }
   .chip.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
-  .chips.muted .chip { opacity: .5; }
 
-  .switch { display: flex; align-items: center; gap: 12px; margin-top: 18px; cursor: pointer; }
-  .switch input { position: absolute; opacity: 0; pointer-events: none; }
-  .track-sw {
-    width: 46px; height: 28px; border-radius: 999px; background: var(--bead-off); position: relative; flex: none;
-    transition: background .2s;
-  }
-  .track-sw::after {
-    content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
-    background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.25); transition: transform .2s;
-  }
-  .switch input:checked + .track-sw { background: var(--gold); }
-  .switch input:checked + .track-sw::after { transform: translateX(18px); }
-  .switch input:focus-visible + .track-sw { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
-  .switch-text { display: flex; flex-direction: column; }
-  .switch-text strong { font-size: 15px; }
-  .switch-text small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .goalbar { width: 100%; }
+  .goalbar-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .goalbar-top b { color: var(--text); }
+  .bar-track { height: 8px; border-radius: 99px; background: var(--bead-off); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); transition: width .3s; }
+
+  /* library */
+  .seg { display: flex; width: 100%; padding: 4px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); gap: 4px; }
+  .seg button { flex: 1; padding: 9px 6px; border: 0; border-radius: 10px; background: transparent; font-weight: 700; font-size: 13.5px; color: var(--muted); }
+  .seg button.active { background: var(--gold); color: var(--bg); }
+  .list { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; align-items: center; gap: 8px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); padding-right: 10px; }
+  .row.active { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+  .row-main { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px 12px 14px; border: 0; background: transparent; text-align: left; }
+  .row-t { min-width: 0; display: flex; flex-direction: column; }
+  .row-t b { font-size: 15px; }
+  .row-t small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .row-r { display: flex; flex-direction: column; align-items: flex-end; flex: none; max-width: 48%; }
+  .row-ar { font-family: "Amiri", serif; font-size: 19px; color: var(--gold); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .row-n { font-size: 12px; color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .num { width: 30px; height: 30px; flex: none; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 800; color: var(--gold); margin-left: 12px; }
+  .card { width: 100%; padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); }
+  .card.active { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+  .card h3 { margin: 0 0 4px; font-size: 16px; }
+  .card p { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .card-actions { display: flex; gap: 8px; align-items: center; }
 
   /* stats */
-  .stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .stats div {
-    padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .stats span { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }
-  .stats small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .tiles { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile { padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; }
+  .tile span { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); line-height: 1.1; }
+  .tile small { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .panel-head h2 { margin: 0; }
+  .mini-seg { display: flex; gap: 4px; }
+  .mini-seg button { padding: 5px 10px; border-radius: 99px; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .mini-seg button.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+  .chart { display: flex; align-items: flex-end; gap: 4px; height: 130px; }
+  .bar-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; min-width: 0; }
+  .bar { width: 100%; max-width: 26px; min-height: 3px; border-radius: 6px 6px 2px 2px; background: var(--gold); opacity: .45; transition: height .3s; }
+  .bar.hit { opacity: 1; }
+  .bar.zero { background: var(--bead-off); opacity: 1; }
+  .bar-col small { font-size: 10.5px; color: var(--muted); height: 13px; font-weight: 600; }
+  .bd { display: flex; flex-direction: column; gap: 10px; }
+  .bd-top { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 5px; }
+  .bd-top span { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; margin: 0; }
 
-  .hint { margin: 0; font-size: 12.5px; color: var(--muted); }
-  kbd { font-family: inherit; font-size: 11.5px; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); }
-  @media (hover: none) { .hint { display: none; } }
+  /* settings */
+  .set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .set:first-of-type { border-top: 0; padding-top: 0; }
+  .set:last-child { padding-bottom: 0; }
+  .set-t { display: flex; flex-direction: column; min-width: 0; }
+  .set-t strong { font-size: 14.5px; }
+  .set-t small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .set .mini-seg { flex-wrap: wrap; justify-content: flex-end; }
+  .swatches { display: flex; gap: 8px; }
+  .sw { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; padding: 0; outline: 1px solid var(--line); }
+  .sw.active { border-color: var(--gold); outline: 2px solid var(--gold); outline-offset: 2px; }
+  .switch { position: relative; width: 46px; height: 28px; flex: none; border-radius: 999px; border: 0; background: var(--bead-off); transition: background .2s; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.25); transition: transform .2s; }
+  .switch[aria-checked="true"] { background: var(--gold); }
+  .switch[aria-checked="true"]::after { transform: translateX(18px); }
+  .note { color: var(--muted); font-size: 12.5px; text-align: center; margin: 0; }
 
-  /* toast */
-  .toast {
-    position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
-    max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 14px;
-    background: var(--gold); color: var(--bg); font-weight: 700; font-size: 14px; text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
-  }
+  /* tab bar */
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--nav); border-top: 1px solid var(--line); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding-bottom: env(safe-area-inset-bottom); }
+  .tabbar-in { max-width: 480px; margin: 0 auto; display: flex; }
+  .tab { flex: 1; padding: 10px 4px 9px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .tab.active { color: var(--gold); }
+
+  /* focus mode */
+  .focus-exit, .focus-hint { display: none; }
+  body.focus .tabbar, body.focus .hide-focus { display: none !important; }
+  body.focus .app { padding-bottom: 24px; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; }
+  body.focus .dial { width: min(88vw, 56vh, 440px); }
+  body.focus .focus-exit { display: inline-flex; position: fixed; top: max(14px, env(safe-area-inset-top)); right: 14px; z-index: 6; }
+  body.focus .focus-hint { display: block; }
+  body.focus { cursor: pointer; user-select: none; -webkit-user-select: none; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); z-index: 20; max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 14px; background: var(--gold); color: var(--bg); font-weight: 700; font-size: 14px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  body.focus .toast { bottom: 30px; }
 
-  /* dialogs */
-  dialog {
-    border: 1px solid var(--line); border-radius: 20px; padding: 22px; width: min(340px, calc(100% - 32px));
-    background: var(--bg); color: var(--text); box-shadow: 0 30px 80px rgba(0,0,0,.4);
-  }
-  dialog::backdrop { background: rgba(0,0,0,.45); backdrop-filter: blur(2px); }
+  dialog { border: 1px solid var(--line); border-radius: 20px; padding: 22px; width: min(380px, calc(100% - 32px)); max-height: calc(100dvh - 40px); background: var(--bg); color: var(--text); box-shadow: 0 30px 80px rgba(0,0,0,.4); }
+  dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(2px); }
   dialog h3 { margin: 0 0 6px; font-size: 18px; }
   dialog p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
-  dialog input {
-    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
-    color: var(--text); font: inherit; font-size: 18px; font-weight: 700; margin-bottom: 16px;
-  }
-  dialog input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
-  .dlg-actions { display: flex; gap: 10px; justify-content: flex-end; }
-  .btn { padding: 10px 18px; border-radius: 12px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-weight: 700; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .inp { width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 600; }
+  .inp:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .inp.ar-inp { font-family: "Amiri", serif; font-size: 19px; }
+  select.inp { appearance: none; -webkit-appearance: none; }
+  select.inp option { color: #111; background: #fff; }
+  .step { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
+  .step select { flex: 1; min-width: 0; }
+  .step input { width: 74px; flex: none; }
+  .dlg-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+  .dlg-actions .sp { flex: 1; }
+  .btn { padding: 10px 18px; border-radius: 12px; border: 1px solid var(--line); background: transparent; font-weight: 700; }
   .btn.primary { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+  .btn.danger { color: #c0392b; }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 <body>
 <main class="app">
-  <header class="top">
+  <header class="top hide-focus">
     <div class="brand">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13.5A8.5 8.5 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z"/><path d="m18 3 .7 1.6L20.3 5l-1.6.7L18 7.3l-.7-1.6L15.7 5l1.6-.4z"/></svg>
       <span>Tasbih<span class="dim"> Digital</span></span>
     </div>
-    <div class="icons">
-      <button class="icon-btn" id="soundBtn" aria-pressed="true" aria-label="Sound" title="Sound">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="on-only" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="off-only" d="m16 9 6 6m0-6-6 6"/></svg>
-      </button>
-      <button class="icon-btn" id="vibBtn" aria-pressed="true" aria-label="Vibration" title="Vibration">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path class="on-only" d="M3 9v6M21 9v6"/><path class="off-only" d="M3 3l18 18"/></svg>
-      </button>
+    <div class="top-right">
+      <span class="streak" id="streakPill" title=""><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1.500.500-2.500 1.500-3.500C9.500 10 11 8 12 3z"/><path d="M12 21a7 7 0 0 0 7-7c0-2-1-4-2-5"/><path d="M5 14a7 7 0 0 0 7 7"/></svg><span id="streakN">0</span></span>
     </div>
   </header>
 
-  <section class="dhikr-card" id="card" aria-live="polite">
-    <p class="ar" id="ar" lang="ar" dir="rtl"></p>
-    <p class="tr" id="tr"></p>
-    <p class="en" id="en"></p>
+  <!-- COUNTER -->
+  <section class="view" id="v-counter">
+    <div class="mode hide-focus" id="modePill" hidden><span id="modeName"></span><button data-act="exitMode" aria-label="Exit"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="dhikr-card" id="card" aria-live="polite">
+      <p class="ar" id="ar" lang="ar" dir="rtl"></p>
+      <p class="tr" id="tr"></p>
+      <p class="en" id="en"></p>
+    </div>
+    <div class="dial" id="dial">
+      <svg class="ring" id="ring" viewBox="-150 -150 300 300" aria-hidden="true"></svg>
+      <button class="counter" id="counter" aria-label="Tap to count">
+        <span class="count" id="count">0</span>
+        <span class="goal" id="goal"></span>
+      </button>
+    </div>
+    <p class="meta" id="meta"></p>
+    <p class="note focus-hint" data-i18n="focusHint"></p>
+    <button class="pill focus-exit" data-act="focus"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span data-i18n="exitFocus"></span></button>
+
+    <div class="actions hide-focus">
+      <button class="pill" id="undoBtn" data-act="undo" disabled><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.500a5.500 5.500 0 0 1 0 11H11"/></svg><span data-i18n="undo"></span></button>
+      <button class="pill" data-act="reset"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.700L3 8"/><path d="M3 3v5h5"/></svg><span data-i18n="reset"></span></button>
+      <button class="pill" data-act="focus"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span data-i18n="focus"></span></button>
+    </div>
+
+    <div class="goalbar hide-focus">
+      <div class="goalbar-top"><span data-i18n="today"></span><span><b id="todayN">0</b> / <span id="goalN">0</span></span></div>
+      <div class="bar-track"><div class="bar-fill" id="goalFill" style="width:0"></div></div>
+    </div>
+
+    <div class="panel hide-focus">
+      <h2 data-i18n="dhikr"></h2>
+      <div class="chips scroll" id="quickChips"></div>
+      <div id="targetWrap">
+        <h2 data-i18n="target" style="margin-top:18px"></h2>
+        <div class="chips" id="targetChips"></div>
+      </div>
+    </div>
   </section>
 
-  <div class="dial" id="dial">
-    <svg class="ring" id="ring" viewBox="-150 -150 300 300" aria-hidden="true"></svg>
-    <button class="counter" id="counter" aria-label="Tap to count">
-      <span class="count" id="count">0</span>
-      <span class="goal" id="goal">/ 33</span>
-    </button>
-  </div>
-  <p class="meta" id="meta"></p>
-
-  <div class="actions">
-    <button class="pill" id="undoBtn" disabled>
-      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Undo
-    </button>
-    <button class="pill" id="resetBtn">
-      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset
-    </button>
-  </div>
-
-  <section class="panel">
-    <h2>Dhikr</h2>
-    <div class="chips" id="dhikrChips"></div>
-    <h2>Target</h2>
-    <div class="chips" id="targetChips"></div>
-    <label class="switch">
-      <input type="checkbox" id="seqToggle">
-      <span class="track-sw"></span>
-      <span class="switch-text">
-        <strong>After-prayer tasbih</strong>
-        <small>33 Subhanallah · 33 Alhamdulillah · 34 Allahu Akbar</small>
-      </span>
-    </label>
+  <!-- LIBRARY -->
+  <section class="view" id="v-library" hidden>
+    <div class="seg" id="libSeg"></div>
+    <div class="list" id="libBody"></div>
   </section>
 
-  <footer class="stats">
-    <div><span id="todayN">0</span><small>Today</small></div>
-    <div><span id="lifeN">0</span><small>All time</small></div>
-  </footer>
-  <p class="hint">Press <kbd>Space</kbd> to count, <kbd>Backspace</kbd> to undo.</p>
+  <!-- STATS -->
+  <section class="view" id="v-stats" hidden></section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="v-settings" hidden></section>
 </main>
+
+<nav class="tabbar"><div class="tabbar-in">
+  <button class="tab" data-act="tab" data-v="counter"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="tabCounter"></span></button>
+  <button class="tab" data-act="tab" data-v="library"><svg class="i" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 0 2 2h13v-4"/></svg><span data-i18n="tabLibrary"></span></button>
+  <button class="tab" data-act="tab" data-v="stats"><svg class="i" viewBox="0 0 24 24"><path d="M5 20v-7M12 20V5M19 20v-11"/></svg><span data-i18n="tabStats"></span></button>
+  <button class="tab" data-act="tab" data-v="settings"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span data-i18n="tabSettings"></span></button>
+</div></nav>
 
 <div class="toast" id="toast" role="status"></div>
 
-<dialog id="resetDlg">
-  <form method="dialog">
-    <h3>Reset counter?</h3>
-    <p id="resetText">This sets the current count back to 0.</p>
-    <div class="dlg-actions">
-      <button class="btn" value="cancel">Cancel</button>
-      <button class="btn primary" value="ok">Reset</button>
-    </div>
-  </form>
+<dialog id="confirmDlg">
+  <h3 id="cTitle"></h3><p id="cText"></p>
+  <div class="dlg-actions"><button class="btn" data-act="dlgClose" data-i18n="cancel"></button><button class="btn primary" id="cOk"></button></div>
 </dialog>
 
-<dialog id="targetDlg">
-  <form method="dialog">
-    <h3>Custom target</h3>
-    <p>How many times for each round?</p>
-    <input id="targetInput" type="number" inputmode="numeric" min="1" max="9999" placeholder="e.g. 1000">
-    <div class="dlg-actions">
-      <button class="btn" value="cancel">Cancel</button>
-      <button class="btn primary" value="ok">Set</button>
-    </div>
-  </form>
+<dialog id="numDlg">
+  <h3 id="nTitle"></h3><p id="nText"></p>
+  <input class="inp" id="nInput" type="number" inputmode="numeric" min="1" max="99999">
+  <div class="dlg-actions"><button class="btn" data-act="dlgClose" data-i18n="cancel"></button><button class="btn primary" id="nOk" data-i18n="set"></button></div>
 </dialog>
+
+<dialog id="dhikrDlg">
+  <h3 id="dTitle"></h3>
+  <label class="field"><span data-i18n="dName"></span><input class="inp" id="dTr" maxlength="60"></label>
+  <label class="field"><span data-i18n="dAr"></span><input class="inp ar-inp" id="dAr" dir="rtl" lang="ar" maxlength="200"></label>
+  <label class="field"><span data-i18n="dMean"></span><input class="inp" id="dMean" maxlength="120"></label>
+  <label class="field"><span data-i18n="target"></span><input class="inp" id="dTarget" type="number" inputmode="numeric" min="1" max="99999"></label>
+  <div class="dlg-actions"><button class="btn danger" id="dDel" data-i18n="del"></button><span class="sp"></span><button class="btn" data-act="dlgClose" data-i18n="cancel"></button><button class="btn primary" id="dSave" data-i18n="save"></button></div>
+</dialog>
+
+<dialog id="routineDlg">
+  <h3 data-i18n="newRoutine"></h3>
+  <label class="field"><span data-i18n="rName"></span><input class="inp" id="rNameInp" maxlength="50"></label>
+  <div id="rSteps"></div>
+  <button class="pill" data-act="rAdd"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="addStep"></span></button>
+  <div class="dlg-actions"><button class="btn" data-act="dlgClose" data-i18n="cancel"></button><button class="btn primary" id="rSave" data-i18n="save"></button></div>
+</dialog>
+
+<input type="file" id="importFile" accept="application/json,.json" hidden>
 
 <script>
 (() => {
-  "use strict";
+"use strict";
 
-  const DHIKR = [
-    { id: "subhanallah",   ar: "سُبْحَانَ ٱللَّٰهِ",              tr: "Subhanallah",        en: "Glory be to Allah" },
-    { id: "alhamdulillah", ar: "ٱلْحَمْدُ لِلَّٰهِ",               tr: "Alhamdulillah",      en: "All praise is for Allah" },
-    { id: "allahuakbar",   ar: "ٱللَّٰهُ أَكْبَرُ",                tr: "Allahu Akbar",       en: "Allah is the Greatest" },
-    { id: "tahlil",        ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ",       tr: "La ilaha illallah",  en: "There is no god but Allah" },
-    { id: "istighfar",     ar: "أَسْتَغْفِرُ ٱللَّٰهَ",            tr: "Astaghfirullah",     en: "I seek forgiveness from Allah" },
-    { id: "salawat",       ar: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", tr: "Selawat",            en: "O Allah, send blessings upon Muhammad" }
-  ];
-  const SEQ = [
-    { id: "subhanallah", n: 33 },
-    { id: "alhamdulillah", n: 33 },
-    { id: "allahuakbar", n: 34 }
-  ];
-  const PRESET_TARGETS = [33, 99, 100, 0]; // 0 = unlimited
-  const KEY = "tasbih-digital-v1";
-  const MAX_BEADS = 33;
+// ---------------------------------------------------------------- data
+const DHIKR = [
+  { id: "subhanallah",   ar: "سُبْحَانَ ٱللَّٰهِ", tr: "Subhanallah", en: "Glory be to Allah", ms: "Maha Suci Allah", target: 33 },
+  { id: "alhamdulillah", ar: "ٱلْحَمْدُ لِلَّٰهِ", tr: "Alhamdulillah", en: "All praise is for Allah", ms: "Segala puji bagi Allah", target: 33 },
+  { id: "allahuakbar",   ar: "ٱللَّٰهُ أَكْبَرُ", tr: "Allahu Akbar", en: "Allah is the Greatest", ms: "Allah Maha Besar", target: 33 },
+  { id: "tahlil",        ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", tr: "La ilaha illallah", en: "There is no god but Allah", ms: "Tiada Tuhan melainkan Allah", target: 100 },
+  { id: "istighfar",     ar: "أَسْتَغْفِرُ ٱللَّٰهَ", tr: "Astaghfirullah", en: "I seek forgiveness from Allah", ms: "Aku memohon ampun kepada Allah", target: 100 },
+  { id: "salawat",       ar: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", tr: "Selawat", en: "O Allah, send blessings upon Muhammad", ms: "Ya Allah, limpahkan selawat ke atas Muhammad", target: 100 },
+  { id: "bihamdihi",     ar: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", tr: "Subhanallahi wa bihamdihi", en: "Glory and praise be to Allah", ms: "Maha Suci Allah dan segala puji bagi-Nya", target: 100 },
+  { id: "azim",          ar: "سُبْحَانَ ٱللَّٰهِ ٱلْعَظِيمِ", tr: "Subhanallahil 'Azim", en: "Glory be to Allah, the Magnificent", ms: "Maha Suci Allah Yang Maha Agung", target: 33 },
+  { id: "hawqala",       ar: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", tr: "La hawla wa la quwwata illa billah", en: "There is no power nor might except with Allah", ms: "Tiada daya dan kekuatan melainkan dengan Allah", target: 100 },
+  { id: "hasbunallah",   ar: "حَسْبُنَا ٱللَّٰهُ وَنِعْمَ ٱلْوَكِيلُ", tr: "Hasbunallahu wa ni'mal wakil", en: "Allah is sufficient for us, and He is the best Disposer of affairs", ms: "Cukuplah Allah bagi kami dan Dialah sebaik-baik Pelindung", target: 100 },
+  { id: "yunus",         ar: "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ ٱلظَّالِمِينَ", tr: "Doa Nabi Yunus", en: "There is no god but You; glory be to You. Indeed, I was among the wrongdoers", ms: "Tiada Tuhan melainkan Engkau, Maha Suci Engkau, sesungguhnya aku termasuk orang yang zalim", target: 100 }
+];
 
-  const $ = (id) => document.getElementById(id);
-  const el = {
-    card: $("card"), ar: $("ar"), tr: $("tr"), en: $("en"),
-    dial: $("dial"), ring: $("ring"), counter: $("counter"), count: $("count"), goal: $("goal"), meta: $("meta"),
-    undo: $("undoBtn"), reset: $("resetBtn"), dhikrChips: $("dhikrChips"), targetChips: $("targetChips"),
-    seq: $("seqToggle"), today: $("todayN"), life: $("lifeN"), toast: $("toast"),
-    sound: $("soundBtn"), vib: $("vibBtn"),
-    resetDlg: $("resetDlg"), resetText: $("resetText"), targetDlg: $("targetDlg"), targetInput: $("targetInput")
+// [arabic, transliteration, english, malay]
+const NAMES = [
+["الرَّحْمَٰنُ","Ar-Rahman","The Most Gracious","Maha Pemurah"],["الرَّحِيمُ","Ar-Rahim","The Most Merciful","Maha Penyayang"],["الْمَلِكُ","Al-Malik","The King","Maha Merajai"],
+["الْقُدُّوسُ","Al-Quddus","The Most Holy","Maha Suci"],["السَّلَامُ","As-Salam","The Source of Peace","Maha Sejahtera"],["الْمُؤْمِنُ","Al-Mu'min","The Giver of Security","Maha Mengurniakan Keamanan"],
+["الْمُهَيْمِنُ","Al-Muhaymin","The Guardian","Maha Memelihara"],["الْعَزِيزُ","Al-'Aziz","The Almighty","Maha Perkasa"],["الْجَبَّارُ","Al-Jabbar","The Compeller","Maha Berkuasa"],
+["الْمُتَكَبِّرُ","Al-Mutakabbir","The Supreme","Maha Memiliki Kebesaran"],["الْخَالِقُ","Al-Khaliq","The Creator","Maha Pencipta"],["الْبَارِئُ","Al-Bari'","The Originator","Maha Mengadakan"],
+["الْمُصَوِّرُ","Al-Musawwir","The Fashioner","Maha Membentuk Rupa"],["الْغَفَّارُ","Al-Ghaffar","The Ever-Forgiving","Maha Pengampun"],["الْقَهَّارُ","Al-Qahhar","The Subduer","Maha Mengalahkan"],
+["الْوَهَّابُ","Al-Wahhab","The Bestower","Maha Pemberi Kurnia"],["الرَّزَّاقُ","Ar-Razzaq","The Provider","Maha Pemberi Rezeki"],["الْفَتَّاحُ","Al-Fattah","The Opener","Maha Pembuka"],
+["الْعَلِيمُ","Al-'Alim","The All-Knowing","Maha Mengetahui"],["الْقَابِضُ","Al-Qabid","The Withholder","Maha Menyempitkan"],["الْبَاسِطُ","Al-Basit","The Extender","Maha Melapangkan"],
+["الْخَافِضُ","Al-Khafid","The Abaser","Maha Merendahkan"],["الرَّافِعُ","Ar-Rafi'","The Exalter","Maha Meninggikan"],["الْمُعِزُّ","Al-Mu'izz","The Giver of Honour","Maha Memuliakan"],
+["الْمُذِلُّ","Al-Mudhill","The Humiliator","Maha Menghinakan"],["السَّمِيعُ","As-Sami'","The All-Hearing","Maha Mendengar"],["الْبَصِيرُ","Al-Basir","The All-Seeing","Maha Melihat"],
+["الْحَكَمُ","Al-Hakam","The Judge","Maha Menetapkan Hukum"],["الْعَدْلُ","Al-'Adl","The Just","Maha Adil"],["اللَّطِيفُ","Al-Latif","The Subtle, the Kind","Maha Lembut"],
+["الْخَبِيرُ","Al-Khabir","The All-Aware","Maha Teliti"],["الْحَلِيمُ","Al-Halim","The Forbearing","Maha Penyantun"],["الْعَظِيمُ","Al-'Azim","The Magnificent","Maha Agung"],
+["الْغَفُورُ","Al-Ghafur","The All-Forgiving","Maha Pengampun"],["الشَّكُورُ","Ash-Shakur","The Appreciative","Maha Mensyukuri"],["الْعَلِيُّ","Al-'Ali","The Most High","Maha Tinggi"],
+["الْكَبِيرُ","Al-Kabir","The Most Great","Maha Besar"],["الْحَفِيظُ","Al-Hafiz","The Preserver","Maha Menjaga"],["الْمُقِيتُ","Al-Muqit","The Sustainer","Maha Pemberi Kecukupan"],
+["الْحَسِيبُ","Al-Hasib","The Reckoner","Maha Menghitung"],["الْجَلِيلُ","Al-Jalil","The Majestic","Maha Luhur"],["الْكَرِيمُ","Al-Karim","The Generous","Maha Pemurah lagi Mulia"],
+["الرَّقِيبُ","Ar-Raqib","The Watchful","Maha Mengawasi"],["الْمُجِيبُ","Al-Mujib","The Responsive","Maha Mengabulkan"],["الْوَاسِعُ","Al-Wasi'","The All-Encompassing","Maha Luas"],
+["الْحَكِيمُ","Al-Hakim","The All-Wise","Maha Bijaksana"],["الْوَدُودُ","Al-Wadud","The Most Loving","Maha Mengasihi"],["الْمَجِيدُ","Al-Majid","The Glorious","Maha Gemilang"],
+["الْبَاعِثُ","Al-Ba'ith","The Resurrector","Maha Membangkitkan"],["الشَّهِيدُ","Ash-Shahid","The Witness","Maha Menyaksikan"],["الْحَقُّ","Al-Haqq","The Truth","Maha Benar"],
+["الْوَكِيلُ","Al-Wakil","The Trustee","Maha Memelihara Urusan"],["الْقَوِيُّ","Al-Qawi","The Most Strong","Maha Kuat"],["الْمَتِينُ","Al-Matin","The Firm","Maha Kukuh"],
+["الْوَلِيُّ","Al-Wali","The Protecting Friend","Maha Melindungi"],["الْحَمِيدُ","Al-Hamid","The Praiseworthy","Maha Terpuji"],["الْمُحْصِي","Al-Muhsi","The Counter of All","Maha Mengira"],
+["الْمُبْدِئُ","Al-Mubdi'","The Initiator","Maha Memulakan"],["الْمُعِيدُ","Al-Mu'id","The Restorer","Maha Mengembalikan"],["الْمُحْيِي","Al-Muhyi","The Giver of Life","Maha Menghidupkan"],
+["الْمُمِيتُ","Al-Mumit","The Bringer of Death","Maha Mematikan"],["الْحَيُّ","Al-Hayy","The Ever-Living","Maha Hidup"],["الْقَيُّومُ","Al-Qayyum","The Self-Subsisting","Maha Berdiri Sendiri"],
+["الْوَاجِدُ","Al-Wajid","The Finder","Maha Menemukan"],["الْمَاجِدُ","Al-Majid","The Noble","Maha Mulia"],["الْوَاحِدُ","Al-Wahid","The One","Maha Esa"],
+["الْأَحَدُ","Al-Ahad","The Unique","Maha Tunggal"],["الصَّمَدُ","As-Samad","The Eternal Refuge","Tempat Bergantung"],["الْقَادِرُ","Al-Qadir","The All-Capable","Maha Berkuasa"],
+["الْمُقْتَدِرُ","Al-Muqtadir","The All-Powerful","Maha Menentukan"],["الْمُقَدِّمُ","Al-Muqaddim","The Expediter","Maha Mendahulukan"],["الْمُؤَخِّرُ","Al-Mu'akhkhir","The Delayer","Maha Mengakhirkan"],
+["الْأَوَّلُ","Al-Awwal","The First","Maha Awal"],["الْآخِرُ","Al-Akhir","The Last","Maha Akhir"],["الظَّاهِرُ","Az-Zahir","The Manifest","Maha Nyata"],
+["الْبَاطِنُ","Al-Batin","The Hidden","Maha Tersembunyi"],["الْوَالِي","Al-Wali","The Governor","Maha Memerintah"],["الْمُتَعَالِي","Al-Muta'ali","The Most Exalted","Maha Tinggi lagi Mulia"],
+["الْبَرُّ","Al-Barr","The Source of Goodness","Maha Melimpahkan Kebaikan"],["التَّوَّابُ","At-Tawwab","The Acceptor of Repentance","Maha Penerima Taubat"],["الْمُنْتَقِمُ","Al-Muntaqim","The Avenger","Maha Membalas"],
+["الْعَفُوُّ","Al-'Afuw","The Pardoner","Maha Pemaaf"],["الرَّءُوفُ","Ar-Ra'uf","The Most Kind","Maha Belas Kasihan"],["مَالِكُ الْمُلْكِ","Malik-ul-Mulk","Owner of All Sovereignty","Pemilik Segala Kerajaan"],
+["ذُو الْجَلَالِ وَالْإِكْرَامِ","Dhul-Jalali wal-Ikram","Lord of Majesty and Honour","Pemilik Keagungan dan Kemuliaan"],["الْمُقْسِطُ","Al-Muqsit","The Equitable","Maha Saksama"],["الْجَامِعُ","Al-Jami'","The Gatherer","Maha Mengumpulkan"],
+["الْغَنِيُّ","Al-Ghani","The Self-Sufficient","Maha Kaya"],["الْمُغْنِي","Al-Mughni","The Enricher","Maha Memberi Kekayaan"],["الْمَانِعُ","Al-Mani'","The Preventer","Maha Mencegah"],
+["الضَّارُّ","Ad-Darr","The Distresser","Maha Memberi Mudarat"],["النَّافِعُ","An-Nafi'","The Benefactor","Maha Memberi Manfaat"],["النُّورُ","An-Nur","The Light","Maha Bercahaya"],
+["الْهَادِي","Al-Hadi","The Guide","Maha Pemberi Petunjuk"],["الْبَدِيعُ","Al-Badi'","The Incomparable Originator","Maha Pencipta Tiada Bandingan"],["الْبَاقِي","Al-Baqi","The Everlasting","Maha Kekal"],
+["الْوَارِثُ","Al-Warith","The Inheritor","Maha Mewarisi"],["الرَّشِيدُ","Ar-Rashid","The Guide to the Right Path","Maha Tepat Tindakan-Nya"],["الصَّبُورُ","As-Sabur","The Most Patient","Maha Penyabar"]
+];
+
+const ROUTINES = [
+  { id: "after-prayer", nameKey: "rAfter", steps: [{ id: "subhanallah", n: 33 }, { id: "alhamdulillah", n: 33 }, { id: "allahuakbar", n: 34 }] },
+  { id: "daily-wirid",  nameKey: "rDaily", steps: [{ id: "istighfar", n: 100 }, { id: "tahlil", n: 100 }, { id: "salawat", n: 100 }] }
+];
+const NAMES_R = { id: "names", flat: true, nameKey: "names", steps: NAMES.map(() => ({ n: 1 })) };
+const TARGETS = [33, 99, 100, 1000, 0];
+const ACCENTS = { emerald: "#1f7a5c", sapphire: "#24609e", maroon: "#8a3246", onyx: "#2a2a2a" };
+const KEY = "tasbih-digital-v2", OLD_KEY = "tasbih-digital-v1", MAX_BEADS = 33;
+
+const T = {
+  en: {
+    tabCounter: "Counter", tabLibrary: "Library", tabStats: "Stats", tabSettings: "Settings",
+    undo: "Undo", reset: "Reset", focus: "Focus", exitFocus: "Exit", focusHint: "Tap anywhere to count",
+    noLimit: "no limit", total: "total", today: "Today", target: "Target", custom: "Custom",
+    roundsDone: n => `${n} round${n > 1 ? "s" : ""} complete`, stepOf: (a, b) => `Step ${a} of ${b}`, nameOf: (a, b) => `Name ${a} of ${b}`,
+    dhikr: "Dhikr", routines: "Routines", names: "Asmaul Husna", addDhikr: "Add your own dhikr", newRoutine: "New routine",
+    start: "Start", cont: "Continue", rAfter: "After-prayer tasbih", rDaily: "Daily wirid",
+    namesDesc: "The 99 Names of Allah. Each tap moves to the next name. Tap any name below to start from there.",
+    goal: "Daily goal", streak: "Day streak", best: "Best day", allTime: "All time", last7: "7 days", last30: "30 days", activity: "Activity",
+    breakdown: "Most recited", noData: "Start counting to see your stats here.", share: "Share progress",
+    shareText: (n, s) => `Alhamdulillah, ${n} dhikr today${s > 1 ? ` and a ${s}-day streak` : ""} with Tasbih Digital.`, copied: "Copied to clipboard",
+    language: "Language", theme: "Theme", auto: "Auto", light: "Light", dark: "Dark", colour: "Colour",
+    sound: "Tap sound", sBead: "Bead", sClick: "Click", sSoft: "Soft", off: "Off", vibration: "Vibration",
+    awake: "Keep screen on", awakeSub: "Stops the screen sleeping while you count", goalSub: n => `${n} dhikr a day`, change: "Change",
+    appearance: "Appearance", feedback: "Feedback", data: "Data", exportD: "Export backup", importD: "Import backup",
+    imported: "Backup imported", badFile: "That file isn't a valid backup", resetAll: "Erase all data",
+    resetAllQ: "This erases every count, custom dhikr and setting on this device.", install: "Install app",
+    cancel: "Cancel", save: "Save", del: "Delete", set: "Set", resetQ: "Reset counter?",
+    resetDhikr: n => `This sets ${n} back to 0. Your stats stay.`, resetRoutine: "This restarts from the beginning. Your stats stay.",
+    counterReset: "Counter reset", customTarget: "Custom target", perRound: "How many times for each round?",
+    goalQ: "How many dhikr do you want to do each day?", enterNum: "Enter a number from 1 to 99999",
+    dName: "Name", dAr: "Arabic text (optional)", dMean: "Meaning (optional)", editDhikr: "Edit dhikr",
+    rName: "Routine name", addStep: "Add step", needName: "Please enter a name", delQ: "Delete this?", delText: n => `"${n}" will be removed.`,
+    complete: (n, name) => `${n}× ${name} complete`, roundN: n => ` · round ${n}`, next: (n, a, b) => `${n}× ${a} done → ${b}`,
+    routineDone: name => `Alhamdulillah, ${name} complete`, goalHit: "Daily goal reached, Alhamdulillah",
+    removed: "Removed dhikr", dataNote: "Everything is saved on this device only.", steps: n => `${n} in total`
+  },
+  ms: {
+    tabCounter: "Kiraan", tabLibrary: "Koleksi", tabStats: "Statistik", tabSettings: "Tetapan",
+    undo: "Undur", reset: "Reset", focus: "Fokus", exitFocus: "Keluar", focusHint: "Sentuh mana-mana untuk kira",
+    noLimit: "tanpa had", total: "jumlah", today: "Hari ini", target: "Sasaran", custom: "Lain",
+    roundsDone: n => `${n} pusingan selesai`, stepOf: (a, b) => `Langkah ${a} daripada ${b}`, nameOf: (a, b) => `Nama ${a} daripada ${b}`,
+    dhikr: "Zikir", routines: "Wirid", names: "Asmaul Husna", addDhikr: "Tambah zikir sendiri", newRoutine: "Wirid baharu",
+    start: "Mula", cont: "Sambung", rAfter: "Tasbih selepas solat", rDaily: "Wirid harian",
+    namesDesc: "99 Nama Allah. Setiap sentuhan beralih ke nama seterusnya. Sentuh mana-mana nama di bawah untuk mula dari situ.",
+    goal: "Sasaran harian", streak: "Hari berturut", best: "Hari terbaik", allTime: "Keseluruhan", last7: "7 hari", last30: "30 hari", activity: "Aktiviti",
+    breakdown: "Paling kerap dibaca", noData: "Mula berzikir untuk melihat statistik di sini.", share: "Kongsi pencapaian",
+    shareText: (n, s) => `Alhamdulillah, ${n} zikir hari ini${s > 1 ? ` dan ${s} hari berturut-turut` : ""} dengan Tasbih Digital.`, copied: "Disalin",
+    language: "Bahasa", theme: "Tema", auto: "Auto", light: "Cerah", dark: "Gelap", colour: "Warna",
+    sound: "Bunyi sentuhan", sBead: "Manik", sClick: "Klik", sSoft: "Lembut", off: "Tutup", vibration: "Getaran",
+    awake: "Skrin sentiasa hidup", awakeSub: "Elak skrin tidur semasa berzikir", goalSub: n => `${n} zikir sehari`, change: "Tukar",
+    appearance: "Paparan", feedback: "Maklum balas", data: "Data", exportD: "Eksport sandaran", importD: "Import sandaran",
+    imported: "Sandaran diimport", badFile: "Fail sandaran tidak sah", resetAll: "Padam semua data",
+    resetAllQ: "Ini memadam semua kiraan, zikir sendiri dan tetapan pada peranti ini.", install: "Pasang aplikasi",
+    cancel: "Batal", save: "Simpan", del: "Padam", set: "Tetapkan", resetQ: "Reset kiraan?",
+    resetDhikr: n => `Ini set semula ${n} kepada 0. Statistik kekal.`, resetRoutine: "Ini mulakan semula dari awal. Statistik kekal.",
+    counterReset: "Kiraan direset", customTarget: "Sasaran lain", perRound: "Berapa kali setiap pusingan?",
+    goalQ: "Berapa zikir anda mahu buat setiap hari?", enterNum: "Masukkan nombor 1 hingga 99999",
+    dName: "Nama", dAr: "Teks Arab (pilihan)", dMean: "Maksud (pilihan)", editDhikr: "Edit zikir",
+    rName: "Nama wirid", addStep: "Tambah langkah", needName: "Sila masukkan nama", delQ: "Padam?", delText: n => `"${n}" akan dipadam.`,
+    complete: (n, name) => `${n}× ${name} selesai`, roundN: n => ` · pusingan ${n}`, next: (n, a, b) => `${n}× ${a} selesai → ${b}`,
+    routineDone: name => `Alhamdulillah, ${name} selesai`, goalHit: "Sasaran harian tercapai, Alhamdulillah",
+    removed: "Zikir dipadam", dataNote: "Semua data disimpan pada peranti ini sahaja.", steps: n => `${n} kesemuanya`
+  }
+};
+
+// ---------------------------------------------------------------- state
+const $ = id => document.getElementById(id);
+const root = document.documentElement;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = n => Number(n || 0).toLocaleString("en-US");
+const pad = n => String(n).padStart(2, "0");
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+const defaults = () => ({
+  v: 2, lang: (navigator.language || "").toLowerCase().startsWith("ms") ? "ms" : "en",
+  theme: "auto", accent: "emerald", sound: "bead", vibrate: true, awake: false, dailyGoal: 300,
+  active: { type: "dhikr", id: "subhanallah" }, targets: {}, counts: {}, custom: [], routines: [],
+  history: {}, totals: {}, lifetime: 0, libTab: "dhikr", chartDays: 7
+});
+
+function clean(o) {
+  const s = Object.assign(defaults(), o || {});
+  for (const k of ["targets", "counts", "history", "totals"]) if (!s[k] || typeof s[k] !== "object") s[k] = {};
+  for (const k of ["custom", "routines"]) if (!Array.isArray(s[k])) s[k] = [];
+  if (!s.active || !s.active.type) s.active = { type: "dhikr", id: "subhanallah" };
+  if (!T[s.lang]) s.lang = "en";
+  if (!ACCENTS[s.accent]) s.accent = "emerald";
+  s.dailyGoal = Math.max(1, Math.floor(Number(s.dailyGoal) || 300));
+  return s;
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return clean(JSON.parse(raw));
+    const old = JSON.parse(localStorage.getItem(OLD_KEY) || "null"); // carry over v1 counts
+    if (old) {
+      const s = defaults();
+      s.counts = old.counts || {}; s.lifetime = old.lifetime || 0;
+      if (typeof old.target === "number" && old.dhikr) s.targets[old.dhikr] = old.target;
+      if (old.dhikr) s.active = { type: "dhikr", id: old.dhikr };
+      if (old.today > 0) s.history[dayKey()] = { t: old.today, by: {} };
+      return s;
+    }
+  } catch (e) { /* storage unavailable */ }
+  return defaults();
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
+
+let S = load();
+let view = "counter", focusMode = false, advanceTimer = null, lastCard = null;
+const undoStack = [];
+
+const t = (k, ...a) => { const v = (T[S.lang] || T.en)[k]; return typeof v === "function" ? v(...a) : (v == null ? k : v); };
+const allDhikr = () => DHIKR.concat(S.custom);
+const findDhikr = id => allDhikr().find(d => d.id === id);
+const dh = id => findDhikr(id) || DHIKR[0];
+const mean = d => d[S.lang] || d.en || "";
+const targetOf = d => (S.targets[d.id] != null ? S.targets[d.id] : (d.target != null ? d.target : 33));
+const allRoutines = () => ROUTINES.concat(S.routines);
+const routineById = id => id === "names" ? NAMES_R : allRoutines().find(r => r.id === id);
+const rName = r => r.nameKey ? t(r.nameKey) : r.name;
+const todayTotal = () => (S.history[dayKey()] || {}).t || 0;
+
+function streak() {
+  let n = 0; const d = new Date();
+  if (!todayTotal()) d.setDate(d.getDate() - 1);
+  while ((S.history[dayKey(d)] || {}).t > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+function cur() {
+  const a = S.active;
+  if (a.type === "routine") {
+    const r = routineById(a.id);
+    if (!r || !r.steps.length) { S.active = { type: "dhikr", id: "subhanallah" }; return cur(); }
+    if (a.step >= r.steps.length || a.step < 0) { a.step = 0; a.count = 0; }
+    if (r.flat) {
+      const nm = NAMES[a.step];
+      return { mode: "names", r, key: "n" + a.step, d: { ar: nm[0], tr: nm[1], en: nm[2], ms: nm[3] }, shown: a.step + a.count, target: r.steps.length };
+    }
+    const st = r.steps[a.step];
+    return { mode: "routine", r, st, key: "r" + st.id, d: dh(st.id), shown: a.count, target: st.n };
+  }
+  if (!findDhikr(a.id)) a.id = "subhanallah";
+  const d = dh(a.id), target = targetOf(d), count = S.counts[d.id] || 0;
+  let shown = count;
+  if (target > 0) { shown = count % target; if (shown === 0 && count > 0) shown = target; }
+  return { mode: "dhikr", key: "d" + d.id, d, shown, target, count };
+}
+
+// ---------------------------------------------------------------- feedback
+let actx = null;
+function tone(freq, dur, vol, type, delay = 0) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    const at = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(vol, at + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g).connect(actx.destination); o.start(at); o.stop(at + dur + 0.02);
+  } catch (e) { /* audio unavailable */ }
+}
+function tick() {
+  if (S.sound === "bead") tone(1250, 0.05, 0.04, "triangle");
+  else if (S.sound === "click") tone(2200, 0.02, 0.025, "square");
+  else if (S.sound === "soft") tone(520, 0.09, 0.05, "sine");
+}
+function chime() { if (S.sound !== "off") { tone(660, 0.3, 0.07, "sine"); tone(990, 0.45, 0.06, "sine", 0.12); } }
+function buzz(p) { if (S.vibrate && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
+
+let toastTimer = null;
+function toast(msg) {
+  const el = $("toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+}
+function celebrate() {
+  const d = $("dial"); d.classList.remove("done"); void d.offsetWidth; d.classList.add("done");
+  chime(); buzz([70, 50, 70]);
+}
+
+let wake = null;
+async function syncWake() {
+  const want = (S.awake || focusMode) && document.visibilityState === "visible";
+  try {
+    if (want && !wake && navigator.wakeLock) { wake = await navigator.wakeLock.request("screen"); wake.addEventListener("release", () => { wake = null; }); }
+    else if (!want && wake) { const w = wake; wake = null; await w.release(); }
+  } catch (e) { /* not allowed */ }
+}
+
+// ---------------------------------------------------------------- counting
+function snapshot() {
+  const k = dayKey();
+  undoStack.push(JSON.stringify({ active: S.active, counts: S.counts, totals: S.totals, lifetime: S.lifetime, k, h: S.history[k] || null }));
+  if (undoStack.length > 300) undoStack.shift();
+}
+function addStat(id) {
+  const k = dayKey(), h = S.history[k] || (S.history[k] = { t: 0, by: {} });
+  h.t++; h.by[id] = (h.by[id] || 0) + 1;
+  S.totals[id] = (S.totals[id] || 0) + 1; S.lifetime++;
+}
+function stopTimer() { clearTimeout(advanceTimer); advanceTimer = null; }
+function advance() {
+  stopTimer();
+  const a = S.active; if (a.type !== "routine") return;
+  const r = routineById(a.id); if (!r) return;
+  a.step = a.step < r.steps.length - 1 ? a.step + 1 : 0; a.count = 0;
+  save(); render();
+}
+
+function increment() {
+  const a = S.active;
+  if (a.type === "routine") { const r0 = routineById(a.id); if (r0 && r0.steps[a.step] && a.count >= r0.steps[a.step].n) advance(); }
+  const c = cur();
+  snapshot();
+  let done = false;
+  if (c.mode === "dhikr") {
+    const n = (S.counts[c.d.id] || 0) + 1;
+    S.counts = Object.assign({}, S.counts, { [c.d.id]: n });
+    addStat(c.d.id);
+    if (c.target > 0 && n % c.target === 0) {
+      done = true; const r = n / c.target;
+      toast(t("complete", fmt(c.target), c.d.tr) + (r > 1 ? t("roundN", r) : ""));
+    }
+  } else {
+    const act = S.active = Object.assign({}, S.active);
+    const st = c.r.steps[act.step], last = act.step >= c.r.steps.length - 1;
+    act.count++;
+    addStat(c.mode === "names" ? "names" : st.id);
+    if (act.count >= st.n) {
+      if (last) { done = true; toast(t("routineDone", rName(c.r))); advanceTimer = setTimeout(advance, 1400); }
+      else if (c.r.flat) { act.step++; act.count = 0; }
+      else { done = true; toast(t("next", st.n, c.d.tr, dh(c.r.steps[act.step + 1].id).tr)); advanceTimer = setTimeout(advance, 1100); }
+    }
+  }
+  if (todayTotal() === S.dailyGoal) { const had = done; done = true; setTimeout(() => toast(t("goalHit")), had ? 1600 : 0); }
+  if (done) celebrate(); else { tick(); buzz(12); }
+  save(); render(true);
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  stopTimer();
+  const s = JSON.parse(undoStack.pop());
+  S.active = s.active; S.counts = s.counts; S.totals = s.totals; S.lifetime = s.lifetime;
+  if (s.h) S.history[s.k] = s.h; else delete S.history[s.k];
+  buzz(8); save(); render();
+}
+
+function setActive(a) { stopTimer(); undoStack.length = 0; S.active = a; save(); }
+
+// ---------------------------------------------------------------- render: counter
+let beadCount = -1, beads = [];
+function buildRing(n) {
+  if (n === beadCount) return;
+  beadCount = n; const R = 136;
+  let h = `<circle class="track" r="${R}"/>`;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    h += `<circle class="bead" cx="${(R * Math.cos(a)).toFixed(2)}" cy="${(R * Math.sin(a)).toFixed(2)}" r="6.5"/>`;
+  }
+  $("ring").innerHTML = h; beads = Array.from($("ring").querySelectorAll(".bead"));
+}
+
+function renderCounter(bump) {
+  const c = cur(), cardKey = c.key + S.lang;
+  if (lastCard !== cardKey) {
+    $("ar").textContent = c.d.ar || ""; $("ar").hidden = !c.d.ar;
+    $("ar").classList.toggle("long", (c.d.ar || "").length > 34);
+    $("tr").textContent = c.d.tr; $("en").textContent = mean(c.d);
+    if (lastCard !== null) { const k = $("card"); k.classList.remove("swap"); void k.offsetWidth; k.classList.add("swap"); }
+    lastCard = cardKey;
+  }
+  let n, lit;
+  if (c.target > 0) { n = Math.min(c.target, MAX_BEADS); lit = Math.round((c.shown / c.target) * n); if (c.shown > 0 && lit === 0) lit = 1; $("goal").textContent = "/ " + fmt(c.target); }
+  else { n = MAX_BEADS; lit = c.shown === 0 ? 0 : (c.shown % n || n); $("goal").textContent = t("noLimit"); }
+  buildRing(n);
+  beads.forEach((b, i) => { b.classList.toggle("on", i < lit); b.classList.toggle("cur", i === lit - 1); });
+
+  const s = fmt(c.shown), cnt = $("count");
+  cnt.textContent = s; cnt.classList.toggle("long", s.length > 4);
+  if (bump) { cnt.classList.remove("bump"); void cnt.offsetWidth; cnt.classList.add("bump"); }
+
+  if (c.mode === "routine") $("meta").textContent = t("stepOf", S.active.step + 1, c.r.steps.length);
+  else if (c.mode === "names") $("meta").textContent = t("nameOf", Math.min(S.active.step + 1, 99), 99);
+  else {
+    const rounds = c.target > 0 ? Math.floor(c.count / c.target) : 0;
+    $("meta").textContent = (rounds > 0 ? t("roundsDone", rounds) + " · " : "") + fmt(c.count) + " " + t("total");
+  }
+  $("modePill").hidden = c.mode === "dhikr";
+  if (c.mode !== "dhikr") $("modeName").textContent = rName(c.r);
+  $("undoBtn").disabled = undoStack.length === 0;
+  $("counter").setAttribute("aria-label", `${c.d.tr}, ${c.shown}${c.target > 0 ? " / " + c.target : ""}`);
+
+  const td = todayTotal();
+  $("todayN").textContent = fmt(td); $("goalN").textContent = fmt(S.dailyGoal);
+  $("goalFill").style.width = Math.min(100, (td / S.dailyGoal) * 100) + "%";
+  $("streakN").textContent = streak(); $("streakPill").title = t("streak");
+
+  $("quickChips").innerHTML = allDhikr().map(d =>
+    `<button class="chip${c.mode === "dhikr" && d.id === c.d.id ? " active" : ""}" data-act="pick" data-id="${esc(d.id)}">${esc(d.tr)}</button>`).join("");
+  $("targetWrap").hidden = c.mode !== "dhikr";
+  if (c.mode === "dhikr") {
+    const preset = TARGETS.includes(c.target);
+    $("targetChips").innerHTML = TARGETS.map(x =>
+      `<button class="chip${x === c.target ? " active" : ""}" data-act="target" data-v="${x}"${x === 0 ? ` aria-label="${esc(t("noLimit"))}"` : ""}>${x === 0 ? "∞" : fmt(x)}</button>`).join("") +
+      `<button class="chip${preset ? "" : " active"}" data-act="targetCustom">${esc(t("custom"))}${preset ? "" : " · " + fmt(c.target)}</button>`;
+  }
+}
+
+// ---------------------------------------------------------------- render: library
+const ICON = {
+  plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  edit: '<svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.500 6.500 4 4"/></svg>',
+  trash: '<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  play: '<svg class="i" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>',
+  share: '<svg class="i" viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>'
+};
+
+function renderLibrary() {
+  const tab = S.libTab;
+  $("libSeg").innerHTML = ["dhikr", "routines", "names"].map(k =>
+    `<button class="${k === tab ? "active" : ""}" data-act="libTab" data-v="${k}">${esc(t(k))}</button>`).join("");
+  const a = S.active; let h = "";
+  if (tab === "dhikr") {
+    h = allDhikr().map(d => {
+      const custom = !DHIKR.includes(d), tg = targetOf(d);
+      return `<div class="row${a.type === "dhikr" && a.id === d.id ? " active" : ""}">
+        <button class="row-main" data-act="pick" data-id="${esc(d.id)}">
+          <span class="row-t"><b>${esc(d.tr)}</b><small>${esc(mean(d))}</small></span>
+          <span class="row-r">${d.ar ? `<span class="row-ar" lang="ar" dir="rtl">${esc(d.ar)}</span>` : ""}<span class="row-n">${fmt(S.counts[d.id])} · ${tg > 0 ? "/" + fmt(tg) : "∞"}</span></span>
+        </button>
+        ${custom ? `<button class="icon-btn sm" data-act="editDhikr" data-id="${esc(d.id)}" aria-label="${esc(t("editDhikr"))}">${ICON.edit}</button>` : ""}
+      </div>`;
+    }).join("") + `<button class="pill wide gold" data-act="addDhikr">${ICON.plus}${esc(t("addDhikr"))}</button>`;
+  } else if (tab === "routines") {
+    h = allRoutines().map(r => {
+      const on = a.type === "routine" && a.id === r.id, custom = !ROUTINES.includes(r);
+      const sum = r.steps.map(s => `${s.n} ${esc(dh(s.id).tr)}`).join(" · ");
+      const tot = r.steps.reduce((x, s) => x + s.n, 0);
+      return `<div class="card${on ? " active" : ""}"><h3>${esc(rName(r))}</h3><p>${sum}<br>${esc(t("steps", fmt(tot)))}</p>
+        <div class="card-actions"><button class="pill gold" data-act="startRoutine" data-id="${esc(r.id)}">${ICON.play}${esc(t(on ? "cont" : "start"))}</button>
+        ${custom ? `<button class="icon-btn sm" data-act="delRoutine" data-id="${esc(r.id)}" aria-label="${esc(t("del"))}">${ICON.trash}</button>` : ""}</div></div>`;
+    }).join("") + `<button class="pill wide gold" data-act="newRoutine">${ICON.plus}${esc(t("newRoutine"))}</button>`;
+  } else {
+    const on = a.type === "routine" && a.id === "names", li = S.lang === "ms" ? 3 : 2;
+    h = `<div class="card${on ? " active" : ""}"><h3>${esc(t("names"))}</h3><p>${esc(t("namesDesc"))}</p>
+      <div class="card-actions"><button class="pill gold" data-act="startRoutine" data-id="names">${ICON.play}${esc(t(on ? "cont" : "start"))}</button></div></div>` +
+      NAMES.map((n, i) => `<div class="row${on && a.step === i ? " active" : ""}"><span class="num">${i + 1}</span>
+        <button class="row-main" style="padding-left:6px" data-act="jumpName" data-i="${i}">
+          <span class="row-t"><b>${esc(n[1])}</b><small>${esc(n[li])}</small></span>
+          <span class="row-r"><span class="row-ar" lang="ar" dir="rtl">${n[0]}</span></span></button></div>`).join("");
+  }
+  $("libBody").innerHTML = h;
+}
+
+// ---------------------------------------------------------------- render: stats
+function lastDays(n) {
+  const out = [], now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    out.push({ d, t: (S.history[dayKey(d)] || {}).t || 0 });
+  }
+  return out;
+}
+function renderStats() {
+  const td = todayTotal(), best = Object.values(S.history).reduce((m, h) => Math.max(m, (h && h.t) || 0), 0);
+  const N = S.chartDays === 30 ? 30 : 7, days = lastDays(N), max = Math.max(S.dailyGoal, ...days.map(x => x.t), 1);
+  const loc = S.lang === "ms" ? "ms-MY" : "en-US";
+  const bars = days.map((x, i) => {
+    const label = N === 7 ? x.d.toLocaleDateString(loc, { weekday: "short" }).slice(0, 3) : ((N - 1 - i) % 5 === 0 ? x.d.getDate() : "");
+    return `<div class="bar-col"><div class="bar${x.t === 0 ? " zero" : x.t >= S.dailyGoal ? " hit" : ""}" style="height:${x.t === 0 ? 0 : Math.max(4, (x.t / max) * 100)}%" title="${fmt(x.t)}"></div><small>${label}</small></div>`;
+  }).join("");
+  const top = Object.entries(S.totals).filter(e => e[1] > 0).sort((x, y) => y[1] - x[1]).slice(0, 6), topMax = top.length ? top[0][1] : 1;
+  const bd = top.map(([id, n]) => {
+    const name = id === "names" ? t("names") : (findDhikr(id) ? findDhikr(id).tr : t("removed"));
+    return `<div><div class="bd-top">${esc(name)}<span>${fmt(n)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n / topMax) * 100}%"></div></div></div>`;
+  }).join("");
+  $("v-stats").innerHTML = `
+    <div class="tiles">
+      <div class="tile"><span>${fmt(td)}</span><small>${esc(t("today"))}</small></div>
+      <div class="tile"><span>${fmt(streak())}</span><small>${esc(t("streak"))}</small></div>
+      <div class="tile"><span>${fmt(best)}</span><small>${esc(t("best"))}</small></div>
+      <div class="tile"><span>${fmt(S.lifetime)}</span><small>${esc(t("allTime"))}</small></div>
+    </div>
+    <div class="panel"><div class="goalbar"><div class="goalbar-top"><span>${esc(t("goal"))}</span><span><b>${fmt(td)}</b> / ${fmt(S.dailyGoal)}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, (td / S.dailyGoal) * 100)}%"></div></div></div></div>
+    <div class="panel"><div class="panel-head"><h2>${esc(t("activity"))}</h2><div class="mini-seg">
+      <button class="${N === 7 ? "active" : ""}" data-act="set" data-k="chartDays" data-v="7">${esc(t("last7"))}</button>
+      <button class="${N === 30 ? "active" : ""}" data-act="set" data-k="chartDays" data-v="30">${esc(t("last30"))}</button></div></div>
+      <div class="chart">${bars}</div></div>
+    <div class="panel"><h2>${esc(t("breakdown"))}</h2>${top.length ? `<div class="bd">${bd}</div>` : `<p class="empty">${esc(t("noData"))}</p>`}</div>
+    <button class="pill wide" data-act="share">${ICON.share}${esc(t("share"))}</button>`;
+}
+
+// ---------------------------------------------------------------- render: settings
+let installEvt = null;
+function renderSettings() {
+  const seg = (k, opts) => `<div class="mini-seg">${opts.map(([v, label]) =>
+    `<button class="${String(S[k]) === String(v) ? "active" : ""}" data-act="set" data-k="${k}" data-v="${v}">${esc(label)}</button>`).join("")}</div>`;
+  const sw = k => `<button class="switch" role="switch" aria-checked="${!!S[k]}" data-act="toggle" data-k="${k}"></button>`;
+  $("v-settings").innerHTML = `
+    <div class="panel"><h2>${esc(t("appearance"))}</h2>
+      <div class="set"><div class="set-t"><strong>${esc(t("language"))}</strong></div>${seg("lang", [["en", "English"], ["ms", "Bahasa Melayu"]])}</div>
+      <div class="set"><div class="set-t"><strong>${esc(t("theme"))}</strong></div>${seg("theme", [["auto", t("auto")], ["light", t("light")], ["dark", t("dark")]])}</div>
+      <div class="set"><div class="set-t"><strong>${esc(t("colour"))}</strong></div><div class="swatches">${Object.keys(ACCENTS).map(k =>
+        `<button class="sw${S.accent === k ? " active" : ""}" style="background:${ACCENTS[k]}" data-act="set" data-k="accent" data-v="${k}" aria-label="${k}"></button>`).join("")}</div></div>
+    </div>
+    <div class="panel"><h2>${esc(t("feedback"))}</h2>
+      <div class="set"><div class="set-t"><strong>${esc(t("sound"))}</strong></div>${seg("sound", [["bead", t("sBead")], ["click", t("sClick")], ["soft", t("sSoft")], ["off", t("off")]])}</div>
+      <div class="set"><div class="set-t"><strong>${esc(t("vibration"))}</strong></div>${sw("vibrate")}</div>
+      <div class="set"><div class="set-t"><strong>${esc(t("awake"))}</strong><small>${esc(t("awakeSub"))}</small></div>${sw("awake")}</div>
+    </div>
+    <div class="panel"><h2>${esc(t("goal"))}</h2>
+      <div class="set"><div class="set-t"><strong>${esc(t("goalSub", fmt(S.dailyGoal)))}</strong></div><button class="pill" data-act="editGoal">${esc(t("change"))}</button></div>
+    </div>
+    <div class="panel"><h2>${esc(t("data"))}</h2>
+      <div class="actions" style="justify-content:flex-start">
+        <button class="pill" data-act="export">${esc(t("exportD"))}</button>
+        <button class="pill" data-act="import">${esc(t("importD"))}</button>
+        ${installEvt ? `<button class="pill gold" data-act="install">${esc(t("install"))}</button>` : ""}
+        <button class="pill danger" data-act="resetAll">${esc(t("resetAll"))}</button>
+      </div>
+    </div>
+    <p class="note">${esc(t("dataNote"))}<br>Tasbih Digital v2.0</p>`;
+}
+
+// ---------------------------------------------------------------- render: shell
+function applyTheme() {
+  const th = S.theme === "auto" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : S.theme;
+  root.dataset.theme = th; root.dataset.accent = S.accent;
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = getComputedStyle(root).getPropertyValue("--bg").trim() || "#0a1f1b";
+}
+function applyLang() {
+  root.lang = S.lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+}
+function render(bump) {
+  renderCounter(bump);
+  if (view === "library") renderLibrary();
+  else if (view === "stats") renderStats();
+  else if (view === "settings") renderSettings();
+}
+function show(v) {
+  view = v;
+  for (const k of ["counter", "library", "stats", "settings"]) $("v-" + k).hidden = k !== v;
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.v === v));
+  render(); window.scrollTo(0, 0);
+}
+function setFocus(on) {
+  focusMode = on; document.body.classList.toggle("focus", on);
+  if (on) show("counter");
+  syncWake();
+}
+
+// ---------------------------------------------------------------- dialogs
+function confirmDlg(title, text, okLabel, cb) {
+  $("cTitle").textContent = title; $("cText").textContent = text; $("cOk").textContent = okLabel;
+  $("cOk").onclick = () => { $("confirmDlg").close(); cb(); };
+  $("confirmDlg").showModal();
+}
+function numDlg(title, text, value, cb) {
+  $("nTitle").textContent = title; $("nText").textContent = text; $("nInput").value = value || "";
+  const go = () => {
+    const v = Math.floor(Number($("nInput").value));
+    if (!v || v < 1 || v > 99999) { toast(t("enterNum")); return; }
+    $("numDlg").close(); cb(v);
   };
-
-  const defaults = () => ({
-    dhikr: "subhanallah", target: 33, counts: {},
-    seq: false, seqStep: 0, seqCount: 0,
-    sound: true, vibrate: true,
-    todayDate: "", today: 0, lifetime: 0
-  });
-
-  // ---------- storage ----------
-  function load() {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) return Object.assign(defaults(), JSON.parse(raw));
-    } catch (e) { /* storage unavailable */ }
-    return defaults();
-  }
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ }
-  }
-
-  let S = load();
-  const undoStack = [];
-  let lastCardId = null;
-  let advanceTimer = null;
-
-  const byId = (id) => DHIKR.find((d) => d.id === id) || DHIKR[0];
-  const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
-  function rollDay() { const t = todayStr(); if (S.todayDate !== t) { S.todayDate = t; S.today = 0; } }
-  const fmt = (n) => n.toLocaleString("en-US");
-
-  function current() {
-    if (S.seq) {
-      const st = SEQ[S.seqStep] || SEQ[0];
-      return { d: byId(st.id), target: st.n, count: S.seqCount };
-    }
-    return { d: byId(S.dhikr), target: S.target, count: S.counts[S.dhikr] || 0 };
-  }
-
-  // ---------- feedback ----------
-  let actx = null;
-  function tone(freq, dur, vol = 0.06, type = "sine", delay = 0) {
-    if (!S.sound) return;
-    try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      const t = actx.currentTime + delay;
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.type = type; o.frequency.value = freq;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-      o.connect(g).connect(actx.destination);
-      o.start(t); o.stop(t + dur + 0.02);
-    } catch (e) { /* audio unavailable */ }
-  }
-  function buzz(pattern) { if (S.vibrate && navigator.vibrate) { try { navigator.vibrate(pattern); } catch (e) {} } }
-
-  let toastTimer = null;
-  function toast(msg) {
-    el.toast.textContent = msg;
-    el.toast.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
-  }
-
-  function celebrate() {
-    el.dial.classList.remove("done");
-    void el.dial.offsetWidth;
-    el.dial.classList.add("done");
-    tone(660, 0.3, 0.07); tone(990, 0.45, 0.06, "sine", 0.12);
-    buzz([70, 50, 70]);
-  }
-
-  // ---------- counting ----------
-  function snapshot() {
-    undoStack.push(JSON.stringify({ counts: S.counts, seqStep: S.seqStep, seqCount: S.seqCount, today: S.today, lifetime: S.lifetime }));
-    if (undoStack.length > 300) undoStack.shift();
-  }
-
-  function advanceSeq() {
-    clearTimeout(advanceTimer); advanceTimer = null;
-    S.seqStep = S.seqStep < SEQ.length - 1 ? S.seqStep + 1 : 0;
-    S.seqCount = 0;
-    save(); render();
-  }
-
-  function increment() {
-    rollDay();
-    if (S.seq && S.seqCount >= SEQ[S.seqStep].n) advanceSeq(); // tapped before auto-advance
-    snapshot();
-    S.today++; S.lifetime++;
-
-    let done = false;
-    if (S.seq) {
-      S.seqCount++;
-      const st = SEQ[S.seqStep];
-      if (S.seqCount >= st.n) {
-        done = true;
-        if (S.seqStep < SEQ.length - 1) {
-          toast(`${st.n}× ${byId(st.id).tr} done → ${byId(SEQ[S.seqStep + 1].id).tr}`);
-        } else {
-          toast("Alhamdulillah, after-prayer tasbih complete (100)");
-        }
-        advanceTimer = setTimeout(advanceSeq, 1100);
-      }
-    } else {
-      const n = (S.counts[S.dhikr] || 0) + 1;
-      S.counts = Object.assign({}, S.counts, { [S.dhikr]: n });
-      if (S.target > 0 && n % S.target === 0) {
-        done = true;
-        const r = n / S.target;
-        toast(`${S.target}× ${byId(S.dhikr).tr} complete${r > 1 ? ` · round ${r}` : ""}`);
-      }
-    }
-
-    if (done) celebrate();
-    else { tone(1250, 0.05, 0.035, "triangle"); buzz(12); }
-
-    save(); render(true);
-  }
-
-  function undo() {
-    if (!undoStack.length) return;
-    clearTimeout(advanceTimer); advanceTimer = null;
-    Object.assign(S, JSON.parse(undoStack.pop()));
-    buzz(8);
-    save(); render();
-  }
-
-  function tap() {
-    increment();
-    el.counter.classList.add("press");
-    setTimeout(() => el.counter.classList.remove("press"), 90);
-  }
-
-  // ---------- ring ----------
-  let beadCount = -1, beads = [];
-  function buildRing(n) {
-    if (n === beadCount) return;
-    beadCount = n;
-    const R = 136;
-    let h = `<circle class="track" r="${R}"/>`;
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-      h += `<circle class="bead" cx="${(R * Math.cos(a)).toFixed(2)}" cy="${(R * Math.sin(a)).toFixed(2)}" r="6.5"/>`;
-    }
-    el.ring.innerHTML = h;
-    beads = Array.from(el.ring.querySelectorAll(".bead"));
-  }
-
-  // ---------- render ----------
-  function render(bump = false) {
-    rollDay();
-    const { d, target, count } = current();
-
-    if (lastCardId !== d.id) {
-      el.ar.textContent = d.ar; el.tr.textContent = d.tr; el.en.textContent = d.en;
-      if (lastCardId !== null) { el.card.classList.remove("swap"); void el.card.offsetWidth; el.card.classList.add("swap"); }
-      lastCardId = d.id;
-    }
-
-    let shown, lit, n;
-    if (target > 0) {
-      if (S.seq) shown = count;
-      else { shown = count % target; if (shown === 0 && count > 0) shown = target; }
-      n = Math.min(target, MAX_BEADS);
-      lit = Math.round((shown / target) * n);
-      el.goal.textContent = `/ ${fmt(target)}`;
-    } else {
-      shown = count;
-      n = MAX_BEADS;
-      lit = count === 0 ? 0 : (count % n || n);
-      el.goal.textContent = "no limit";
-    }
-    buildRing(n);
-    beads.forEach((b, i) => { b.classList.toggle("on", i < lit); b.classList.toggle("cur", i === lit - 1); });
-
-    const s = fmt(shown);
-    el.count.textContent = s;
-    el.count.classList.toggle("long", s.length > 4);
-    if (bump) { el.count.classList.remove("bump"); void el.count.offsetWidth; el.count.classList.add("bump"); }
-
-    if (S.seq) {
-      el.meta.textContent = `Step ${S.seqStep + 1} of 3 · after-prayer tasbih`;
-    } else if (target > 0) {
-      const rounds = Math.floor(count / target);
-      el.meta.textContent = rounds > 0
-        ? `${rounds} round${rounds > 1 ? "s" : ""} complete · ${fmt(count)} total`
-        : `${fmt(count)} total`;
-    } else {
-      el.meta.textContent = `${fmt(count)} total`;
-    }
-
-    el.today.textContent = fmt(S.today);
-    el.life.textContent = fmt(S.lifetime);
-    el.undo.disabled = undoStack.length === 0;
-    el.counter.setAttribute("aria-label", `${d.tr}, count ${shown}${target > 0 ? " of " + target : ""}. Tap to count.`);
-
-    // chips
-    el.dhikrChips.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", !S.seq && c.dataset.id === S.dhikr));
-    const isPreset = PRESET_TARGETS.includes(S.target);
-    el.targetChips.querySelectorAll(".chip").forEach((c) => {
-      if (c.dataset.t === "custom") {
-        c.textContent = isPreset ? "Custom" : `Custom · ${fmt(S.target)}`;
-        c.classList.toggle("active", !S.seq && !isPreset);
-      } else {
-        c.classList.toggle("active", !S.seq && Number(c.dataset.t) === S.target);
-      }
+  $("nOk").onclick = go; $("nInput").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); go(); } };
+  $("numDlg").showModal();
+}
+function dhikrDlg(id) {
+  const d = id ? S.custom.find(x => x.id === id) : null;
+  $("dTitle").textContent = t(d ? "editDhikr" : "addDhikr");
+  $("dTr").value = d ? d.tr : ""; $("dAr").value = d ? d.ar || "" : ""; $("dMean").value = d ? d.en || "" : "";
+  $("dTarget").value = d ? (targetOf(d) || 33) : 33; $("dDel").hidden = !d;
+  $("dSave").onclick = () => {
+    const tr = $("dTr").value.trim(); if (!tr) { toast(t("needName")); return; }
+    const tg = Math.min(99999, Math.max(1, Math.floor(Number($("dTarget").value)) || 33));
+    const rec = { id: d ? d.id : "c" + Date.now().toString(36), tr, ar: $("dAr").value.trim(), en: $("dMean").value.trim(), target: tg };
+    if (d) S.custom = S.custom.map(x => x.id === d.id ? rec : x); else S.custom = S.custom.concat(rec);
+    S.targets[rec.id] = tg;
+    if (!d) setActive({ type: "dhikr", id: rec.id });
+    lastCard = null; save(); $("dhikrDlg").close(); render();
+  };
+  $("dDel").onclick = () => {
+    $("dhikrDlg").close();
+    confirmDlg(t("delQ"), t("delText", d.tr), t("del"), () => {
+      S.custom = S.custom.filter(x => x.id !== d.id);
+      delete S.counts[d.id]; delete S.targets[d.id];
+      S.routines = S.routines.map(r => Object.assign({}, r, { steps: r.steps.filter(s => s.id !== d.id) })).filter(r => r.steps.length);
+      if (S.active.id === d.id || (S.active.type === "routine" && !routineById(S.active.id))) setActive({ type: "dhikr", id: "subhanallah" });
+      save(); render();
     });
-    el.dhikrChips.classList.toggle("muted", S.seq);
-    el.targetChips.classList.toggle("muted", S.seq);
-    el.seq.checked = S.seq;
-    el.sound.setAttribute("aria-pressed", String(S.sound));
-    el.vib.setAttribute("aria-pressed", String(S.vibrate));
-  }
+  };
+  $("dhikrDlg").showModal();
+}
+let rSteps = [];
+function drawSteps() {
+  $("rSteps").innerHTML = rSteps.map((s, i) => `<div class="step">
+    <select class="inp" data-ri="${i}">${allDhikr().map(d => `<option value="${esc(d.id)}"${d.id === s.id ? " selected" : ""}>${esc(d.tr)}</option>`).join("")}</select>
+    <input class="inp" type="number" inputmode="numeric" min="1" max="99999" value="${s.n}" data-rn="${i}">
+    <button class="icon-btn sm" data-act="rDel" data-i="${i}" ${rSteps.length < 2 ? "disabled" : ""}>${ICON.trash}</button></div>`).join("");
+}
+function routineDlg() {
+  rSteps = [{ id: "subhanallah", n: 33 }, { id: "alhamdulillah", n: 33 }];
+  $("rNameInp").value = ""; drawSteps();
+  $("rSave").onclick = () => {
+    const name = $("rNameInp").value.trim(); if (!name) { toast(t("needName")); return; }
+    const steps = rSteps.map(s => ({ id: s.id, n: Math.min(99999, Math.max(1, Math.floor(Number(s.n)) || 1)) }));
+    S.routines = S.routines.concat({ id: "r" + Date.now().toString(36), name, steps });
+    save(); $("routineDlg").close(); render();
+  };
+  $("routineDlg").showModal();
+}
+$("rSteps").addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.ri != null) rSteps[+el.dataset.ri].id = el.value;
+  if (el.dataset.rn != null) rSteps[+el.dataset.rn].n = el.value;
+});
 
-  function exitSeq() {
-    if (!S.seq) return;
-    S.seq = false; clearTimeout(advanceTimer); advanceTimer = null;
-  }
+// ---------------------------------------------------------------- actions
+function exportData() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = `tasbih-backup-${dayKey()}.json`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+$("importFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const o = JSON.parse(await f.text());
+    if (!o || typeof o !== "object" || o.v !== 2) throw new Error("bad");
+    S = clean(o); undoStack.length = 0; lastCard = null; stopTimer();
+    save(); applyTheme(); applyLang(); render(); toast(t("imported"));
+  } catch (err) { toast(t("badFile")); }
+});
+async function share() {
+  const text = t("shareText", fmt(todayTotal()), streak());
+  try {
+    if (navigator.share) { await navigator.share({ text }); return; }
+    await navigator.clipboard.writeText(text); toast(t("copied"));
+  } catch (e) { /* cancelled */ }
+}
 
-  function buildChips() {
-    DHIKR.forEach((d) => {
-      const b = document.createElement("button");
-      b.className = "chip"; b.textContent = d.tr; b.dataset.id = d.id;
-      b.addEventListener("click", () => {
-        exitSeq(); S.dhikr = d.id; undoStack.length = 0; save(); render();
-      });
-      el.dhikrChips.append(b);
+const ACT = {
+  tab: el => show(el.dataset.v),
+  undo, focus: () => setFocus(!focusMode),
+  exitMode: () => { setActive({ type: "dhikr", id: "subhanallah" }); render(); },
+  reset: () => {
+    const c = cur();
+    confirmDlg(t("resetQ"), c.mode === "dhikr" ? t("resetDhikr", c.d.tr) : t("resetRoutine"), t("reset"), () => {
+      stopTimer(); undoStack.length = 0;
+      if (c.mode === "dhikr") S.counts = Object.assign({}, S.counts, { [c.d.id]: 0 });
+      else S.active = Object.assign({}, S.active, { step: 0, count: 0 });
+      save(); render(); toast(t("counterReset"));
     });
-    [...PRESET_TARGETS, "custom"].forEach((t) => {
-      const b = document.createElement("button");
-      b.className = "chip"; b.dataset.t = String(t);
-      b.textContent = t === 0 ? "∞" : t === "custom" ? "Custom" : String(t);
-      if (t === 0) b.setAttribute("aria-label", "No limit");
-      b.addEventListener("click", () => {
-        if (t === "custom") {
-          el.targetInput.value = PRESET_TARGETS.includes(S.target) ? "" : S.target;
-          el.targetDlg.showModal();
-          return;
-        }
-        exitSeq(); S.target = t; save(); render();
-      });
-      el.targetChips.append(b);
+  },
+  pick: el => { setActive({ type: "dhikr", id: el.dataset.id }); show("counter"); },
+  target: el => { S.targets[cur().d.id] = Number(el.dataset.v); save(); render(); },
+  targetCustom: () => { const c = cur(); numDlg(t("customTarget"), t("perRound"), TARGETS.includes(c.target) ? "" : c.target, v => { S.targets[c.d.id] = v; save(); render(); }); },
+  libTab: el => { S.libTab = el.dataset.v; save(); render(); },
+  addDhikr: () => dhikrDlg(null),
+  editDhikr: el => dhikrDlg(el.dataset.id),
+  newRoutine: routineDlg,
+  rAdd: () => { rSteps.push({ id: "subhanallah", n: 33 }); drawSteps(); },
+  rDel: el => { rSteps.splice(+el.dataset.i, 1); drawSteps(); },
+  startRoutine: el => {
+    const id = el.dataset.id, a = S.active;
+    if (!(a.type === "routine" && a.id === id)) setActive({ type: "routine", id, step: 0, count: 0 });
+    show("counter");
+  },
+  jumpName: el => { setActive({ type: "routine", id: "names", step: +el.dataset.i, count: 0 }); show("counter"); },
+  delRoutine: el => {
+    const r = routineById(el.dataset.id); if (!r) return;
+    confirmDlg(t("delQ"), t("delText", rName(r)), t("del"), () => {
+      S.routines = S.routines.filter(x => x.id !== r.id);
+      if (S.active.type === "routine" && S.active.id === r.id) setActive({ type: "dhikr", id: "subhanallah" });
+      save(); render();
     });
-  }
+  },
+  set: el => {
+    const k = el.dataset.k; let v = el.dataset.v; if (k === "chartDays") v = Number(v);
+    S[k] = v; save();
+    if (k === "theme" || k === "accent") applyTheme();
+    if (k === "lang") { applyLang(); lastCard = null; }
+    if (k === "sound") tick();
+    render();
+  },
+  toggle: el => { const k = el.dataset.k; S[k] = !S[k]; save(); if (k === "awake") syncWake(); if (k === "vibrate") buzz(20); render(); },
+  editGoal: () => numDlg(t("goal"), t("goalQ"), S.dailyGoal, v => { S.dailyGoal = v; save(); render(); }),
+  export: exportData,
+  import: () => $("importFile").click(),
+  install: async () => { if (!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch (e) {} installEvt = null; render(); },
+  resetAll: () => confirmDlg(t("resetAll"), t("resetAllQ"), t("del"), () => {
+    stopTimer(); undoStack.length = 0; lastCard = null;
+    const keep = { lang: S.lang }; S = Object.assign(defaults(), keep);
+    save(); applyTheme(); applyLang(); render();
+  }),
+  share,
+  dlgClose: el => el.closest("dialog").close()
+};
 
-  // ---------- events ----------
-  el.counter.addEventListener("pointerdown", (e) => {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    const r = el.counter.getBoundingClientRect();
-    const sp = document.createElement("span");
-    sp.className = "ripple";
-    sp.style.left = `${e.clientX - r.left}px`; sp.style.top = `${e.clientY - r.top}px`;
-    el.counter.append(sp);
-    setTimeout(() => sp.remove(), 650);
-    increment();
-  });
-  el.counter.addEventListener("contextmenu", (e) => e.preventDefault());
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || el.disabled) return;
+  const fn = ACT[el.dataset.act]; if (fn) fn(el);
+});
 
-  document.addEventListener("keydown", (e) => {
-    if (document.querySelector("dialog[open]") || e.repeat) return;
-    const tag = (e.target && e.target.tagName) || "";
-    if (tag === "INPUT" || tag === "TEXTAREA") return;
-    const free = e.target === el.counter || e.target === document.body;
-    if ((e.code === "Space" || e.key === "Enter") && free) { e.preventDefault(); tap(); }
-    else if (e.key === "Backspace") { e.preventDefault(); undo(); }
-  });
+function ripple(x, y) {
+  const b = $("counter"), r = b.getBoundingClientRect(), sp = document.createElement("span");
+  const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  sp.className = "ripple";
+  sp.style.left = (inside ? x - r.left : r.width / 2) + "px"; sp.style.top = (inside ? y - r.top : r.height / 2) + "px";
+  b.append(sp); setTimeout(() => sp.remove(), 650);
+}
+document.addEventListener("pointerdown", e => {
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  if (document.querySelector("dialog[open]")) return;
+  const onCounter = e.target.closest("#counter");
+  if (!onCounter && !(focusMode && !e.target.closest("[data-act]"))) return;
+  ripple(e.clientX, e.clientY); increment();
+});
+$("counter").addEventListener("contextmenu", e => e.preventDefault());
 
-  el.undo.addEventListener("click", undo);
+document.addEventListener("keydown", e => {
+  if (document.querySelector("dialog[open]") || e.repeat || view !== "counter") return;
+  const tag = (e.target && e.target.tagName) || "";
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (e.key === "Escape" && focusMode) { setFocus(false); return; }
+  const free = e.target === $("counter") || e.target === document.body || focusMode;
+  if ((e.code === "Space" || e.key === "Enter") && free) {
+    e.preventDefault(); increment();
+    const b = $("counter"); b.classList.add("press"); setTimeout(() => b.classList.remove("press"), 90);
+  } else if (e.key === "Backspace") { e.preventDefault(); undo(); }
+});
 
-  el.reset.addEventListener("click", () => {
-    el.resetText.textContent = S.seq
-      ? "This restarts the after-prayer tasbih from the beginning."
-      : `This sets ${byId(S.dhikr).tr} back to 0. Your Today and All-time totals stay.`;
-    el.resetDlg.returnValue = "";
-    el.resetDlg.showModal();
-  });
-  el.resetDlg.addEventListener("close", () => {
-    if (el.resetDlg.returnValue !== "ok") return;
-    clearTimeout(advanceTimer); advanceTimer = null;
-    if (S.seq) { S.seqStep = 0; S.seqCount = 0; }
-    else { S.counts = Object.assign({}, S.counts, { [S.dhikr]: 0 }); }
-    undoStack.length = 0;
-    save(); render(); toast("Counter reset");
-  });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+document.addEventListener("visibilitychange", () => { syncWake(); if (document.visibilityState === "visible") render(); });
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; if (view === "settings") render(); });
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
 
-  el.targetDlg.addEventListener("close", () => {
-    if (el.targetDlg.returnValue !== "ok") { el.targetDlg.returnValue = ""; return; }
-    el.targetDlg.returnValue = "";
-    const v = Math.floor(Number(el.targetInput.value));
-    if (!v || v < 1) { toast("Enter a number from 1 to 9999"); return; }
-    exitSeq(); S.target = Math.min(v, 9999); save(); render();
-  });
-
-  el.seq.addEventListener("change", () => {
-    clearTimeout(advanceTimer); advanceTimer = null;
-    S.seq = el.seq.checked; S.seqStep = 0; S.seqCount = 0;
-    undoStack.length = 0;
-    save(); render();
-  });
-
-  el.sound.addEventListener("click", () => { S.sound = !S.sound; save(); render(); if (S.sound) tone(1250, 0.05, 0.035, "triangle"); });
-  el.vib.addEventListener("click", () => { S.vibrate = !S.vibrate; save(); render(); buzz(20); });
-
-  // ---------- start ----------
-  buildChips();
-  render();
+// ---------------------------------------------------------------- start
+applyTheme(); applyLang(); show("counter"); syncWake();
 })();
 </script>
 </body>

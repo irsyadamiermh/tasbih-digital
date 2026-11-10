@@ -1,27 +1,47 @@
 # Tasbih Digital 📿
 
-A simple, beautiful digital tasbih (dhikr counter) that runs right in the browser. No install, no login, and your count is saved on your device.
+A complete digital tasbih (dhikr counter) that runs in the browser. No install, no login, no ads. Everything is saved on your own device and it works offline.
 
 ## Features
 
-- **Big tap button** with a 33-bead ring that lights up as you count
-- **6 dhikr presets** with Arabic text, transliteration and meaning: Subhanallah, Alhamdulillah, Allahu Akbar, La ilaha illallah, Astaghfirullah, Selawat
-- **Targets**: 33, 99, 100, no limit, or any custom number, with round tracking
-- **After-prayer tasbih mode**: 33 Subhanallah → 33 Alhamdulillah → 34 Allahu Akbar, moving to the next automatically
-- **Sound and vibration** feedback (each can be turned off)
-- **Undo** a mistaken tap, and **reset** with confirmation
-- **Today and all-time totals**
-- **Saves automatically** in your browser (localStorage), so the count is still there after you close the tab
-- **Keyboard shortcuts**: `Space` to count, `Backspace` to undo
-- **Light and dark mode** that follow your device setting
-- Works on phone and desktop
+**Counter**
+- Big tap button with a 33-bead ring that lights up as you count
+- Targets of 33, 99, 100, 1000, no limit, or any custom number, remembered per dhikr
+- Round tracking, undo, and reset with confirmation
+- **Focus mode**: full-screen, tap anywhere to count, screen stays on
+- Keyboard shortcuts: `Space` to count, `Backspace` to undo, `Esc` to leave focus mode
+
+**Library**
+- 11 built-in dhikr with Arabic text, transliteration and meaning
+- **Add your own dhikr** (name, Arabic text, meaning, target), then edit or delete it
+- **Routines (wirid)**: after-prayer tasbih (33/33/34) and daily wirid built in, moving to the next step automatically
+- **Build your own routine** from any dhikr, in any order
+- **Asmaul Husna**: all 99 Names of Allah with meanings, one name per tap
+
+**Stats**
+- Today, day streak, best day and all-time totals
+- Daily goal with a progress bar
+- 7-day and 30-day activity chart
+- Most-recited breakdown
+- Share your progress
+
+**Personalise**
+- English and Bahasa Melayu
+- Light, dark or automatic theme, with 4 colour themes
+- 3 tap sounds (or off), and vibration
+- Keep-screen-on option
+
+**Data**
+- Saves automatically in the browser (localStorage)
+- Export and import a backup file to move to another device
+- **Installable (PWA)** and works fully offline after the first visit
 
 ## Run it
 
-It's a single file, so there is nothing to build.
+There is nothing to build.
 
-- **Easiest:** open `index.html` in any browser.
-- **Local server (optional):**
+- **Quickest:** open `index.html` in any browser.
+- **With offline/install support** (needs a web server):
   ```bash
   npx serve .
   # or
@@ -42,7 +62,10 @@ Import the repo, keep the default settings (no build command, output directory =
 
 ```
 tasbih-digital/
-├── index.html   # the whole app: HTML, CSS and JavaScript
+├── index.html            # the whole app: HTML, CSS and JavaScript
+├── sw.js                 # service worker for offline use
+├── manifest.webmanifest  # makes the app installable
+├── icon.svg, icon-192.png, icon-512.png
 ├── README.md
 ├── LICENSE
 └── .gitignore
@@ -54,10 +77,9 @@ Plain HTML, CSS and JavaScript. No framework and no dependencies, just Google Fo
 
 ## Ideas for later
 
-- [ ] Installable PWA that works fully offline
-- [ ] Malay / English language switch
-- [ ] Daily history chart
-- [ ] Add your own dhikr
+- [ ] Prayer times and reminders
+- [ ] Morning and evening adhkar with full text
+- [ ] Sync between devices
 
 ## License
 
