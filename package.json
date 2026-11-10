@@ -1,0 +1,17 @@
+{
+  "name": "tasbih-digital",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Tasbih Digital - Android wrapper (Capacitor). The web app itself is index.html and needs no build.",
+  "scripts": {
+    "build:web": "node scripts/copy-web.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0"
+  }
+}

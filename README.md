@@ -58,6 +58,14 @@ There is nothing to build.
 **Vercel / Netlify**
 Import the repo, keep the default settings (no build command, output directory = root) and deploy.
 
+## Android app (APK)
+
+Every push to `main` builds an Android APK automatically with GitHub Actions (the app is wrapped with [Capacitor](https://capacitorjs.com)).
+
+- **Download:** open the repo's **Releases** page and get `tasbih-digital.apk` from the *latest* release. It is also attached to each run under the **Actions** tab.
+- **Install:** open the file on an Android phone and allow "install unknown apps" when asked.
+- This is a debug build for installing directly. Publishing on Google Play needs a signed release build.
+
 ## Project structure
 
 ```
@@ -66,6 +74,8 @@ tasbih-digital/
 ├── sw.js                 # service worker for offline use
 ├── manifest.webmanifest  # makes the app installable
 ├── icon.svg, icon-192.png, icon-512.png
+├── package.json, capacitor.config.json, scripts/, assets/   # Android wrapper
+├── .github/workflows/build-apk.yml                          # builds the APK
 ├── README.md
 ├── LICENSE
 └── .gitignore
