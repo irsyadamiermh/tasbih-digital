@@ -1,5 +1,5 @@
 // Offline support: cache the app shell, then refresh it in the background.
-const CACHE = "zikra-v3.0";
+const CACHE = "zikra-v3.1";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

@@ -230,6 +230,39 @@
   .switch[aria-checked="true"]::after { transform: translateX(18px); }
   .note { color: var(--muted); font-size: 12.5px; text-align: center; margin: 0; }
 
+  /* settings: friendly layout */
+  .sgroup { width: 100%; }
+  .sgroup-h { margin: 6px 4px 8px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .sgroup-h.danger { color: #c0392b; }
+  .sbox { width: 100%; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); overflow: hidden; }
+  .srow { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 0; background: transparent; text-align: left; }
+  .srow + .srow, .srow + .sblock, .sblock + .srow, .sblock + .sblock { border-top: 1px solid var(--line); }
+  button.srow:active { background: var(--bead-off); }
+  .s-ic { width: 36px; height: 36px; flex: none; border-radius: 11px; display: grid; place-items: center; background: rgba(212,175,55,.15); background: color-mix(in srgb, var(--gold) 16%, transparent); color: var(--gold); }
+  .s-ic svg { width: 19px; height: 19px; }
+  .s-ic.red { background: rgba(192,57,43,.12); color: #c0392b; }
+  .s-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .s-t strong { font-size: 15px; font-weight: 700; }
+  .s-t small { color: var(--muted); font-size: 12.5px; margin-top: 2px; line-height: 1.4; }
+  .s-t.red strong { color: #c0392b; }
+  .chev { color: var(--muted); width: 18px; height: 18px; flex: none; }
+  .sblock { padding: 14px 16px 16px; }
+  .sblock .srow-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .sblock .seg { background: transparent; }
+  .seg button svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 4px; }
+  .s-hint { margin: 8px 2px 0; font-size: 12px; color: var(--muted); }
+  .accents { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .acc { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px 8px; border-radius: 14px; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .acc i { width: 30px; height: 30px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 2px rgba(255,255,255,.15); }
+  .acc.active { border-color: var(--gold); color: var(--text); box-shadow: inset 0 0 0 1px var(--gold); }
+  .goal-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .goal-chips .chip { padding: 9px 0; text-align: center; }
+  .about { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 18px 16px; }
+  .about img { width: 64px; height: 64px; border-radius: 18px; box-shadow: 0 8px 22px rgba(0,0,0,.25); margin-bottom: 6px; }
+  .about b { font-size: 18px; }
+  .about .ar2 { font-family: "Amiri", serif; color: var(--gold); font-weight: 700; font-size: 16px; }
+  .about small { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+
   /* tab bar */
   .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--nav); border-top: 1px solid var(--line); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding-bottom: env(safe-area-inset-bottom); }
   .tabbar-in { max-width: 480px; margin: 0 auto; display: flex; }
@@ -484,6 +517,12 @@ const T = {
     rName: "Routine name", addStep: "Add step", needName: "Please enter a name", delQ: "Delete this?", delText: n => `"${n}" will be removed.`,
     complete: (n, name) => `${n}× ${name} complete`, roundN: n => ` · round ${n}`, next: (n, a, b) => `${n}× ${a} done → ${b}`,
     routineDone: name => `Alhamdulillah, ${name} complete`, goalHit: "Daily goal reached, Alhamdulillah",
+    sDaily: "Daily practice", goalToday: n => `${n} done today`, soundVib: "Sound & vibration", soundHint: "Tap an option to hear it",
+    sSilent: "Silent", vibSub: "A short buzz on every count", display: "Display", dataBackup: "Data & backup",
+    exportSub: "Save all counts and settings to a file", importSub: "Restore from a backup file", installSub: "Add Zikra to your home screen",
+    danger: "Danger zone", resetAllSub: "Erase every count, custom dhikr and setting", about: "About",
+    aboutSub: "Free digital tasbih. No ads, no login.", sources: "Virtue notes: Sahih Muslim no. 596 & 597",
+    aEmerald: "Emerald", aSapphire: "Sapphire", aMaroon: "Maroon", aOnyx: "Onyx",
     removed: "Removed dhikr", dataNote: "Everything is saved on this device only.", steps: n => `${n} in total`
   },
   ms: {
@@ -517,6 +556,12 @@ const T = {
     rName: "Nama wirid", addStep: "Tambah langkah", needName: "Sila masukkan nama", delQ: "Padam?", delText: n => `"${n}" akan dipadam.`,
     complete: (n, name) => `${n}× ${name} selesai`, roundN: n => ` · pusingan ${n}`, next: (n, a, b) => `${n}× ${a} selesai → ${b}`,
     routineDone: name => `Alhamdulillah, ${name} selesai`, goalHit: "Sasaran harian tercapai, Alhamdulillah",
+    sDaily: "Ibadah harian", goalToday: n => `${n} dibaca hari ini`, soundVib: "Bunyi & getaran", soundHint: "Sentuh pilihan untuk dengar bunyinya",
+    sSilent: "Senyap", vibSub: "Getar sedikit setiap kali mengira", display: "Paparan", dataBackup: "Data & sandaran",
+    exportSub: "Simpan semua kiraan dan tetapan ke dalam fail", importSub: "Pulihkan daripada fail sandaran", installSub: "Tambah Zikra ke skrin utama",
+    danger: "Zon bahaya", resetAllSub: "Padam semua kiraan, zikir sendiri dan tetapan", about: "Tentang",
+    aboutSub: "Tasbih digital percuma. Tanpa iklan, tanpa log masuk.", sources: "Nota fadhilat: Sahih Muslim no. 596 & 597",
+    aEmerald: "Zamrud", aSapphire: "Nilam", aMaroon: "Merah hati", aOnyx: "Hitam",
     removed: "Zikir dipadam", dataNote: "Semua data disimpan pada peranti ini sahaja.", steps: n => `${n} kesemuanya`
   }
 };
@@ -884,34 +929,70 @@ function renderStats() {
 
 // ---------------------------------------------------------------- render: settings
 let installEvt = null;
+const SI = {
+  goal: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  sound: '<svg class="i" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>',
+  vib: '<svg class="i" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 9v6M21 9v6"/></svg>',
+  awake: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  theme: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>',
+  colour: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.500-1-2.500 1-1.500 2-1.500h2a4 4 0 0 0 4-4c0-4.400-4-8-9-8z"/><circle cx="7.500" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>',
+  lang: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+  exp: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>',
+  imp: '<svg class="i" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>',
+  inst: '<svg class="i" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 8v6M9 11l3 3 3-3"/></svg>',
+  trash: '<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  chev: '<svg class="i chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>',
+  sun: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>',
+  moon: '<svg class="i" viewBox="0 0 24 24"><path d="M20 13.500A8.500 8.500 0 1 1 10.500 4a6.500 6.500 0 0 0 9.500 9.500z"/></svg>',
+  auto: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>'
+};
+const GOAL_PRESETS = [100, 300, 500, 1000];
 function renderSettings() {
-  const seg = (k, opts) => `<div class="mini-seg">${opts.map(([v, label]) =>
-    `<button class="${String(S[k]) === String(v) ? "active" : ""}" data-act="set" data-k="${k}" data-v="${v}">${esc(label)}</button>`).join("")}</div>`;
-  const sw = k => `<button class="switch" role="switch" aria-checked="${!!S[k]}" data-act="toggle" data-k="${k}"></button>`;
+  const seg = (k, opts) => `<div class="seg">${opts.map(([v, label, ic]) =>
+    `<button class="${String(S[k]) === String(v) ? "active" : ""}" data-act="set" data-k="${k}" data-v="${v}">${ic || ""}${esc(label)}</button>`).join("")}</div>`;
+  const sw = k => `<button class="switch" role="switch" aria-checked="${!!S[k]}" data-act="toggle" data-k="${k}" aria-label="${esc(k)}"></button>`;
+  const head = (ic, title, sub) => `<span class="s-ic">${ic}</span><span class="s-t"><strong>${esc(title)}</strong>${sub ? `<small>${esc(sub)}</small>` : ""}</span>`;
+  const presetGoal = GOAL_PRESETS.includes(S.dailyGoal);
+  const accNames = { emerald: "aEmerald", sapphire: "aSapphire", maroon: "aMaroon", onyx: "aOnyx" };
   $("v-settings").innerHTML = `
-    <div class="panel"><h2>${esc(t("appearance"))}</h2>
-      <div class="set"><div class="set-t"><strong>${esc(t("language"))}</strong></div>${seg("lang", [["en", "English"], ["ms", "Bahasa Melayu"]])}</div>
-      <div class="set"><div class="set-t"><strong>${esc(t("theme"))}</strong></div>${seg("theme", [["auto", t("auto")], ["light", t("light")], ["dark", t("dark")]])}</div>
-      <div class="set"><div class="set-t"><strong>${esc(t("colour"))}</strong></div><div class="swatches">${Object.keys(ACCENTS).map(k =>
-        `<button class="sw${S.accent === k ? " active" : ""}" style="background:${ACCENTS[k]}" data-act="set" data-k="accent" data-v="${k}" aria-label="${k}"></button>`).join("")}</div></div>
-    </div>
-    <div class="panel"><h2>${esc(t("feedback"))}</h2>
-      <div class="set"><div class="set-t"><strong>${esc(t("sound"))}</strong></div>${seg("sound", [["bead", t("sBead")], ["click", t("sClick")], ["soft", t("sSoft")], ["off", t("off")]])}</div>
-      <div class="set"><div class="set-t"><strong>${esc(t("vibration"))}</strong></div>${sw("vibrate")}</div>
-      <div class="set"><div class="set-t"><strong>${esc(t("awake"))}</strong><small>${esc(t("awakeSub"))}</small></div>${sw("awake")}</div>
-    </div>
-    <div class="panel"><h2>${esc(t("goal"))}</h2>
-      <div class="set"><div class="set-t"><strong>${esc(t("goalSub", fmt(S.dailyGoal)))}</strong></div><button class="pill" data-act="editGoal">${esc(t("change"))}</button></div>
-    </div>
-    <div class="panel"><h2>${esc(t("data"))}</h2>
-      <div class="actions" style="justify-content:flex-start">
-        <button class="pill" data-act="export">${esc(t("exportD"))}</button>
-        <button class="pill" data-act="import">${esc(t("importD"))}</button>
-        ${installEvt ? `<button class="pill gold" data-act="install">${esc(t("install"))}</button>` : ""}
-        <button class="pill danger" data-act="resetAll">${esc(t("resetAll"))}</button>
-      </div>
-    </div>
-    <p class="note">${esc(t("dataNote"))}<br>Zikra v3.0</p>`;
+    <section class="sgroup"><h2 class="sgroup-h">${esc(t("sDaily"))}</h2><div class="sbox">
+      <div class="sblock"><div class="srow-top">${head(SI.goal, t("goal"), t("goalSub", fmt(S.dailyGoal)) + " · " + t("goalToday", fmt(todayTotal())))}</div>
+        <div class="goal-chips">${GOAL_PRESETS.map(n => `<button class="chip${S.dailyGoal === n ? " active" : ""}" data-act="goalPreset" data-v="${n}">${fmt(n)}</button>`).join("")}
+        <button class="chip${presetGoal ? "" : " active"}" data-act="editGoal">${presetGoal ? esc(t("custom")) : fmt(S.dailyGoal)}</button></div></div>
+    </div></section>
+
+    <section class="sgroup"><h2 class="sgroup-h">${esc(t("soundVib"))}</h2><div class="sbox">
+      <div class="sblock"><div class="srow-top">${head(SI.sound, t("sound"))}</div>
+        ${seg("sound", [["bead", t("sBead")], ["click", t("sClick")], ["soft", t("sSoft")], ["off", t("sSilent")]])}
+        <p class="s-hint">${esc(t("soundHint"))}</p></div>
+      <div class="srow">${head(SI.vib, t("vibration"), t("vibSub"))}${sw("vibrate")}</div>
+      <div class="srow">${head(SI.awake, t("awake"), t("awakeSub"))}${sw("awake")}</div>
+    </div></section>
+
+    <section class="sgroup"><h2 class="sgroup-h">${esc(t("display"))}</h2><div class="sbox">
+      <div class="sblock"><div class="srow-top">${head(SI.theme, t("theme"))}</div>
+        ${seg("theme", [["light", t("light"), SI.sun], ["auto", t("auto"), SI.auto], ["dark", t("dark"), SI.moon]])}</div>
+      <div class="sblock"><div class="srow-top">${head(SI.colour, t("colour"))}</div>
+        <div class="accents">${Object.keys(ACCENTS).map(k =>
+          `<button class="acc${S.accent === k ? " active" : ""}" data-act="set" data-k="accent" data-v="${k}"><i style="background:${ACCENTS[k]}"></i>${esc(t(accNames[k]))}</button>`).join("")}</div></div>
+      <div class="sblock"><div class="srow-top">${head(SI.lang, t("language"))}</div>
+        ${seg("lang", [["ms", "Bahasa Melayu"], ["en", "English"]])}</div>
+    </div></section>
+
+    <section class="sgroup"><h2 class="sgroup-h">${esc(t("dataBackup"))}</h2><div class="sbox">
+      <button class="srow" data-act="export">${head(SI.exp, t("exportD"), t("exportSub"))}${SI.chev}</button>
+      <button class="srow" data-act="import">${head(SI.imp, t("importD"), t("importSub"))}${SI.chev}</button>
+      ${installEvt ? `<button class="srow" data-act="install">${head(SI.inst, t("install"), t("installSub"))}${SI.chev}</button>` : ""}
+    </div><p class="s-hint" style="margin:8px 4px 0">${esc(t("dataNote"))}</p></section>
+
+    <section class="sgroup"><h2 class="sgroup-h danger">${esc(t("danger"))}</h2><div class="sbox">
+      <button class="srow" data-act="resetAll"><span class="s-ic red">${SI.trash}</span><span class="s-t red"><strong>${esc(t("resetAll"))}</strong><small>${esc(t("resetAllSub"))}</small></span>${SI.chev}</button>
+    </div></section>
+
+    <section class="sgroup"><h2 class="sgroup-h">${esc(t("about"))}</h2><div class="sbox"><div class="about">
+      <img src="icon.svg" alt=""><b>Zikra</b><span class="ar2" lang="ar">ذِكْرَى</span>
+      <small>${esc(t("aboutSub"))}<br>${esc(t("sources"))}<br>v3.1</small>
+    </div></div></section>`;
 }
 
 // ---------------------------------------------------------------- render: shell
@@ -1078,6 +1159,7 @@ const ACT = {
     render();
   },
   toggle: el => { const k = el.dataset.k; S[k] = !S[k]; save(); if (k === "awake") syncWake(); if (k === "vibrate") buzz(20); render(); },
+  goalPreset: el => { S.dailyGoal = Number(el.dataset.v); save(); render(); },
   editGoal: () => numDlg(t("goal"), t("goalQ"), S.dailyGoal, v => { S.dailyGoal = v; save(); render(); }),
   export: exportData,
   import: () => $("importFile").click(),
