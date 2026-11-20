@@ -136,6 +136,39 @@
   .bar-track { height: 8px; border-radius: 99px; background: var(--bead-off); overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); transition: width .3s; }
 
+  /* routine step rings */
+  .steps-row { display: flex; gap: 10px; justify-content: center; width: 100%; overflow-x: auto; padding: 2px 4px 4px; scrollbar-width: none; }
+  .steps-row::-webkit-scrollbar { display: none; }
+  .stp { flex: none; width: 68px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: transparent; padding: 0; }
+  .stp-ring { position: relative; width: 60px; height: 60px; }
+  .stp-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .stp-ring circle { fill: none; stroke-width: 5; }
+  .stp-ring .bg { stroke: var(--bead-off); }
+  .stp-ring .fg { stroke: var(--gold); stroke-linecap: round; transition: stroke-dashoffset .3s; }
+  .stp-in { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .stp-in small { font-size: 10px; opacity: .6; font-weight: 700; }
+  .stp-name { font-size: 10.5px; font-weight: 700; color: var(--muted); max-width: 68px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stp.cur .stp-ring { filter: drop-shadow(0 0 8px var(--gold)); }
+  .stp.cur .stp-name { color: var(--gold); }
+  .stp.done .stp-ring .bg { stroke: var(--gold); opacity: .35; }
+  .stp.done .stp-in { color: var(--gold); }
+  .ar.xlong { font-size: clamp(19px, 5.4vw, 25px); line-height: 1.7; }
+
+  /* virtue note */
+  .virtue { width: 100%; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); padding: 0 16px; }
+  .virtue summary { display: flex; align-items: center; gap: 8px; padding: 13px 0; cursor: pointer; list-style: none; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; font-weight: 800; color: var(--gold); }
+  .virtue summary::-webkit-details-marker { display: none; }
+  .virtue summary svg { width: 17px; height: 17px; }
+  .virtue summary::after { content: "▾"; margin-left: auto; transition: transform .2s; }
+  .virtue:not([open]) summary::after { transform: rotate(-90deg); }
+  .virtue-text { margin: 0 0 8px; font-size: 14.5px; line-height: 1.6; }
+  .virtue-src { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: var(--gold); }
+  .virtue-cav { margin: 0 0 14px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .virtue-cav:empty { display: none; }
+  .card .vq { margin: 10px 0 4px; padding-left: 10px; border-left: 3px solid var(--gold); font-size: 13px; line-height: 1.55; color: var(--text); }
+  .card .vs { margin: 0 0 12px; font-size: 12px; font-weight: 700; color: var(--gold); }
+  .eq { font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+
   /* library */
   .seg { display: flex; width: 100%; padding: 4px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); gap: 4px; }
   .seg button { flex: 1; padding: 9px 6px; border: 0; border-radius: 10px; background: transparent; font-weight: 700; font-size: 13.5px; color: var(--muted); }
@@ -251,6 +284,7 @@
   <!-- COUNTER -->
   <section class="view" id="v-counter">
     <div class="mode hide-focus" id="modePill" hidden><span id="modeName"></span><button data-act="exitMode" aria-label="Exit"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="steps-row" id="stepsRow" hidden></div>
     <div class="dhikr-card" id="card" aria-live="polite">
       <p class="ar" id="ar" lang="ar" dir="rtl"></p>
       <p class="tr" id="tr"></p>
@@ -272,6 +306,13 @@
       <button class="pill" data-act="reset"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.700L3 8"/><path d="M3 3v5h5"/></svg><span data-i18n="reset"></span></button>
       <button class="pill" data-act="focus"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span data-i18n="focus"></span></button>
     </div>
+
+    <details class="virtue hide-focus" id="virtue" open hidden>
+      <summary><svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M5 8h14M7 8l-3 7a3 3 0 0 0 6 0zM17 8l-3 7a3 3 0 0 0 6 0z"/></svg><span id="virtueTitle"></span></summary>
+      <p class="virtue-text" id="virtueText"></p>
+      <p class="virtue-src" id="virtueSrc"></p>
+      <p class="virtue-cav" id="virtueCav"></p>
+    </details>
 
     <div class="goalbar hide-focus">
       <div class="goalbar-top"><span data-i18n="today"></span><span><b id="todayN">0</b> / <span id="goalN">0</span></span></div>
@@ -350,6 +391,7 @@ const DHIKR = [
   { id: "alhamdulillah", ar: "ٱلْحَمْدُ لِلَّٰهِ", tr: "Alhamdulillah", en: "All praise is for Allah", ms: "Segala puji bagi Allah", target: 33 },
   { id: "allahuakbar",   ar: "ٱللَّٰهُ أَكْبَرُ", tr: "Allahu Akbar", en: "Allah is the Greatest", ms: "Allah Maha Besar", target: 33 },
   { id: "tahlil",        ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", tr: "La ilaha illallah", en: "There is no god but Allah", ms: "Tiada Tuhan melainkan Allah", target: 100 },
+  { id: "tahlil-full",   ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ ٱلْمُلْكُ وَلَهُ ٱلْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ", tr: "La ilaha illallahu wahdahu la syarika lah", en: "There is no god but Allah alone, without partner. His is the dominion and His is the praise, and He has power over all things", ms: "Tiada Tuhan melainkan Allah, Yang Maha Esa, tiada sekutu bagi-Nya. Bagi-Nya kerajaan dan bagi-Nya segala pujian, dan Dia Maha Berkuasa atas segala sesuatu", target: 100 },
   { id: "istighfar",     ar: "أَسْتَغْفِرُ ٱللَّٰهَ", tr: "Astaghfirullah", en: "I seek forgiveness from Allah", ms: "Aku memohon ampun kepada Allah", target: 100 },
   { id: "salawat",       ar: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", tr: "Selawat", en: "O Allah, send blessings upon Muhammad", ms: "Ya Allah, limpahkan selawat ke atas Muhammad", target: 100 },
   { id: "bihamdihi",     ar: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", tr: "Subhanallahi wa bihamdihi", en: "Glory and praise be to Allah", ms: "Maha Suci Allah dan segala puji bagi-Nya", target: 100 },
@@ -397,7 +439,10 @@ const NAMES = [
 ];
 
 const ROUTINES = [
-  { id: "after-prayer", nameKey: "rAfter", steps: [{ id: "subhanallah", n: 33 }, { id: "alhamdulillah", n: 33 }, { id: "allahuakbar", n: 34 }] },
+  { id: "after-prayer-100", nameKey: "rAfter100", noteKey: "n597", srcKey: "s597", caveatKey: "caveat",
+    steps: [{ id: "subhanallah", n: 33 }, { id: "alhamdulillah", n: 33 }, { id: "allahuakbar", n: 33 }, { id: "tahlil-full", n: 1 }] },
+  { id: "after-prayer", nameKey: "rAfter", noteKey: "n596", srcKey: "s596",
+    steps: [{ id: "subhanallah", n: 33 }, { id: "alhamdulillah", n: 33 }, { id: "allahuakbar", n: 34 }] },
   { id: "daily-wirid",  nameKey: "rDaily", steps: [{ id: "istighfar", n: 100 }, { id: "tahlil", n: 100 }, { id: "salawat", n: 100 }] }
 ];
 const NAMES_R = { id: "names", flat: true, nameKey: "names", steps: NAMES.map(() => ({ n: 1 })) };
@@ -412,7 +457,13 @@ const T = {
     noLimit: "no limit", total: "total", today: "Today", target: "Target", custom: "Custom",
     roundsDone: n => `${n} round${n > 1 ? "s" : ""} complete`, stepOf: (a, b) => `Step ${a} of ${b}`, nameOf: (a, b) => `Name ${a} of ${b}`,
     dhikr: "Dhikr", routines: "Routines", names: "Asmaul Husna", addDhikr: "Add your own dhikr", newRoutine: "New routine",
-    start: "Start", cont: "Continue", rAfter: "After-prayer tasbih", rDaily: "Daily wirid",
+    start: "Start", cont: "Continue", rAfter100: "After-prayer tasbih (100)", rAfter: "After-prayer tasbih (33·33·34)", rDaily: "Daily wirid",
+    virtue: "Virtue",
+    n597: "“Whoever glorifies Allah 33 times after every prayer, praises Him 33 times and declares His greatness 33 times, that makes 99, and completes the hundred by saying ‘La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa ‘ala kulli shay’in qadir’, his sins will be forgiven even if they are like the foam of the sea.”",
+    s597: "Sahih Muslim, no. 597 (narrated by Abu Hurairah)",
+    caveat: "Scholars explain that this covers minor sins; major sins need sincere repentance (taubah).",
+    n596: "“There are words to be said after every obligatory prayer whose sayer will never be disappointed: 33 tasbih, 33 tahmid and 34 takbir.”",
+    s596: "Sahih Muslim, no. 596 (narrated by Ka‘b bin ‘Ujrah)",
     namesDesc: "The 99 Names of Allah. Each tap moves to the next name. Tap any name below to start from there.",
     goal: "Daily goal", streak: "Day streak", best: "Best day", allTime: "All time", last7: "7 days", last30: "30 days", activity: "Activity",
     breakdown: "Most recited", noData: "Start counting to see your stats here.", share: "Share progress",
@@ -439,7 +490,13 @@ const T = {
     noLimit: "tanpa had", total: "jumlah", today: "Hari ini", target: "Sasaran", custom: "Lain",
     roundsDone: n => `${n} pusingan selesai`, stepOf: (a, b) => `Langkah ${a} daripada ${b}`, nameOf: (a, b) => `Nama ${a} daripada ${b}`,
     dhikr: "Zikir", routines: "Wirid", names: "Asmaul Husna", addDhikr: "Tambah zikir sendiri", newRoutine: "Wirid baharu",
-    start: "Mula", cont: "Sambung", rAfter: "Tasbih selepas solat", rDaily: "Wirid harian",
+    start: "Mula", cont: "Sambung", rAfter100: "Tasbih selepas solat (100)", rAfter: "Tasbih selepas solat (33·33·34)", rDaily: "Wirid harian",
+    virtue: "Fadhilat",
+    n597: "“Sesiapa yang bertasbih 33 kali selepas setiap solat, bertahmid 33 kali dan bertakbir 33 kali, maka jumlahnya 99, lalu dia genapkan 100 dengan membaca ‘La ilaha illallahu wahdahu la syarika lah, lahul mulku wa lahul hamdu wa huwa ‘ala kulli syai’in qadir’, diampunkan dosa-dosanya walaupun seperti buih di lautan.”",
+    s597: "Hadis riwayat Muslim, no. 597 (daripada Abu Hurairah)",
+    caveat: "Menurut penjelasan ulama, yang diampunkan ialah dosa-dosa kecil; dosa besar memerlukan taubat.",
+    n596: "“Ada beberapa zikir yang tidak akan rugi sesiapa yang membacanya selepas setiap solat fardu: 33 kali tasbih, 33 kali tahmid dan 34 kali takbir.”",
+    s596: "Hadis riwayat Muslim, no. 596 (daripada Ka‘ab bin ‘Ujrah)",
     namesDesc: "99 Nama Allah. Setiap sentuhan beralih ke nama seterusnya. Sentuh mana-mana nama di bawah untuk mula dari situ.",
     goal: "Sasaran harian", streak: "Hari berturut", best: "Hari terbaik", allTime: "Keseluruhan", last7: "7 hari", last30: "30 hari", activity: "Aktiviti",
     breakdown: "Paling kerap dibaca", noData: "Mula berzikir untuk melihat statistik di sini.", share: "Kongsi pencapaian",
@@ -666,7 +723,9 @@ function renderCounter(bump) {
   const c = cur(), cardKey = c.key + S.lang;
   if (lastCard !== cardKey) {
     $("ar").textContent = c.d.ar || ""; $("ar").hidden = !c.d.ar;
-    $("ar").classList.toggle("long", (c.d.ar || "").length > 34);
+    const arLen = (c.d.ar || "").length;
+    $("ar").classList.toggle("long", arLen > 34 && arLen <= 60);
+    $("ar").classList.toggle("xlong", arLen > 60);
     $("tr").textContent = c.d.tr; $("en").textContent = mean(c.d);
     if (lastCard !== null) { const k = $("card"); k.classList.remove("swap"); void k.offsetWidth; k.classList.add("swap"); }
     lastCard = cardKey;
@@ -687,6 +746,15 @@ function renderCounter(bump) {
     const rounds = c.target > 0 ? Math.floor(c.count / c.target) : 0;
     $("meta").textContent = (rounds > 0 ? t("roundsDone", rounds) + " · " : "") + fmt(c.count) + " " + t("total");
   }
+  renderSteps(c);
+  const r = c.mode === "routine" ? c.r : null, hasNote = !!(r && r.noteKey);
+  $("virtue").hidden = !hasNote;
+  if (hasNote) {
+    $("virtueTitle").textContent = t("virtue");
+    $("virtueText").textContent = t(r.noteKey);
+    $("virtueSrc").textContent = t(r.srcKey);
+    $("virtueCav").textContent = r.caveatKey ? t(r.caveatKey) : "";
+  }
   $("modePill").hidden = c.mode === "dhikr";
   if (c.mode !== "dhikr") $("modeName").textContent = rName(c.r);
   $("undoBtn").disabled = undoStack.length === 0;
@@ -706,6 +774,22 @@ function renderCounter(bump) {
       `<button class="chip${x === c.target ? " active" : ""}" data-act="target" data-v="${x}"${x === 0 ? ` aria-label="${esc(t("noLimit"))}"` : ""}>${x === 0 ? "∞" : fmt(x)}</button>`).join("") +
       `<button class="chip${preset ? "" : " active"}" data-act="targetCustom">${esc(t("custom"))}${preset ? "" : " · " + fmt(c.target)}</button>`;
   }
+}
+
+function renderSteps(c) {
+  const row = $("stepsRow");
+  if (c.mode !== "routine") { row.hidden = true; row.innerHTML = ""; return; }
+  row.hidden = false;
+  const a = S.active, C = 2 * Math.PI * 26;
+  row.innerHTML = c.r.steps.map((st, i) => {
+    const got = i < a.step ? st.n : i === a.step ? Math.min(a.count, st.n) : 0;
+    const cls = got >= st.n ? " done" : i === a.step ? " cur" : "";
+    return `<div class="stp${cls}${i === a.step ? " cur" : ""}"><div class="stp-ring"><svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/>` +
+      `<circle class="fg" cx="30" cy="30" r="26" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - got / st.n)).toFixed(1)}"/></svg>` +
+      `<span class="stp-in"><span>${fmt(got)}<small>/${fmt(st.n)}</small></span></span></div><span class="stp-name">${esc(dh(st.id).tr)}</span></div>`;
+  }).join("");
+  const curEl = row.querySelector(".stp.cur");
+  if (curEl && row.scrollWidth > row.clientWidth) curEl.scrollIntoView({ block: "nearest", inline: "center" });
 }
 
 // ---------------------------------------------------------------- render: library
@@ -738,7 +822,9 @@ function renderLibrary() {
       const on = a.type === "routine" && a.id === r.id, custom = !ROUTINES.includes(r);
       const sum = r.steps.map(s => `${s.n} ${esc(dh(s.id).tr)}`).join(" · ");
       const tot = r.steps.reduce((x, s) => x + s.n, 0);
-      return `<div class="card${on ? " active" : ""}"><h3>${esc(rName(r))}</h3><p>${sum}<br>${esc(t("steps", fmt(tot)))}</p>
+      const eq = r.steps.map(s => s.n).join(" + ") + " = " + fmt(tot);
+      const note = r.noteKey ? `<p class="vq">${esc(t(r.noteKey))}</p><p class="vs">${esc(t(r.srcKey))}</p>` : "";
+      return `<div class="card${on ? " active" : ""}"><h3>${esc(rName(r))}</h3><p>${sum}<br><span class="eq">${esc(eq)}</span></p>${note}
         <div class="card-actions"><button class="pill gold" data-act="startRoutine" data-id="${esc(r.id)}">${ICON.play}${esc(t(on ? "cont" : "start"))}</button>
         ${custom ? `<button class="icon-btn sm" data-act="delRoutine" data-id="${esc(r.id)}" aria-label="${esc(t("del"))}">${ICON.trash}</button>` : ""}</div></div>`;
     }).join("") + `<button class="pill wide gold" data-act="newRoutine">${ICON.plus}${esc(t("newRoutine"))}</button>`;
@@ -822,7 +908,7 @@ function renderSettings() {
         <button class="pill danger" data-act="resetAll">${esc(t("resetAll"))}</button>
       </div>
     </div>
-    <p class="note">${esc(t("dataNote"))}<br>Tasbih Digital v2.0</p>`;
+    <p class="note">${esc(t("dataNote"))}<br>Tasbih Digital v2.1</p>`;
 }
 
 // ---------------------------------------------------------------- render: shell

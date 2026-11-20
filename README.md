@@ -14,7 +14,8 @@ A complete digital tasbih (dhikr counter) that runs in the browser. No install, 
 **Library**
 - 11 built-in dhikr with Arabic text, transliteration and meaning
 - **Add your own dhikr** (name, Arabic text, meaning, target), then edit or delete it
-- **Routines (wirid)**: after-prayer tasbih (33/33/34) and daily wirid built in, moving to the next step automatically
+- **Routines (wirid)**: after-prayer tasbih 33 + 33 + 33 + 1 = 100 (Sahih Muslim 597), after-prayer tasbih 33/33/34 (Sahih Muslim 596) and daily wirid, moving to the next step automatically
+- **Step rings** show progress through each part of a routine, with the hadith on its virtue (fadhilat) and its source
 - **Build your own routine** from any dhikr, in any order
 - **Asmaul Husna**: all 99 Names of Allah with meanings, one name per tap
 
