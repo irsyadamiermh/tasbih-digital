@@ -1,97 +1,93 @@
-# Tasbih Digital 📿
+<p align="center"><img src="icon-512.png" width="140" alt="Logo Zikra"></p>
 
-A complete digital tasbih (dhikr counter) that runs in the browser. No install, no login, no ads. Everything is saved on your own device and it works offline.
+<h1 align="center">Zikra <sub>ذِكْرَى</sub></h1>
+<p align="center"><b>Tasbih digital untuk zikir harian.</b><br>Percuma, tanpa iklan, tanpa log masuk. Semua data disimpan dalam telefon anda sendiri dan boleh guna tanpa internet.</p>
 
-## Features
+<p align="center"><a href="https://github.com/irsyadamiermh/tasbih-digital/releases/download/latest/zikra.apk"><b>⬇ Muat turun APK Android</b></a></p>
 
-**Counter**
-- Big tap button with a 33-bead ring that lights up as you count
-- Targets of 33, 99, 100, 1000, no limit, or any custom number, remembered per dhikr
-- Round tracking, undo, and reset with confirmation
-- **Focus mode**: full-screen, tap anywhere to count, screen stays on
-- Keyboard shortcuts: `Space` to count, `Backspace` to undo, `Esc` to leave focus mode
+---
 
-**Library**
-- 11 built-in dhikr with Arabic text, transliteration and meaning
-- **Add your own dhikr** (name, Arabic text, meaning, target), then edit or delete it
-- **Routines (wirid)**: after-prayer tasbih 33 + 33 + 33 + 1 = 100 (Sahih Muslim 597), after-prayer tasbih 33/33/34 (Sahih Muslim 596) and daily wirid, moving to the next step automatically
-- **Step rings** show progress through each part of a routine, with the hadith on its virtue (fadhilat) and its source
-- **Build your own routine** from any dhikr, in any order
-- **Asmaul Husna**: all 99 Names of Allah with meanings, one name per tap
+Logo Zikra menggabungkan **bunga raya**, bunga kebangsaan Malaysia, dengan **bulan sabit** di tengahnya. Debunganya pula ialah butir-butir tasbih.
 
-**Stats**
-- Today, day streak, best day and all-time totals
-- Daily goal with a progress bar
-- 7-day and 30-day activity chart
-- Most-recited breakdown
-- Share your progress
+## Ciri-ciri
 
-**Personalise**
-- English and Bahasa Melayu
-- Light, dark or automatic theme, with 4 colour themes
-- 3 tap sounds (or off), and vibration
-- Keep-screen-on option
+**Kiraan**
+- Butang besar dengan lingkaran 33 manik yang menyala setiap kali dikira
+- Sasaran 33, 99, 100, 1000, tanpa had atau nombor sendiri, diingat untuk setiap zikir
+- Kiraan pusingan, butang undur dan reset dengan pengesahan
+- **Mod fokus**: skrin penuh, sentuh mana-mana untuk kira, skrin sentiasa hidup
+
+**Koleksi**
+- 12 zikir dengan teks Arab, sebutan dan maksud
+- **Tambah zikir sendiri** (nama, teks Arab, maksud, sasaran), kemudian edit atau padam
+- **Wirid**:
+  - Tasbih selepas solat **33 + 33 + 33 + 1 = 100** (Hadis riwayat Muslim, no. 597)
+  - Tasbih selepas solat **33 + 33 + 34** (Hadis riwayat Muslim, no. 596)
+  - Wirid harian
+- **Bina wirid sendiri** daripada mana-mana zikir
+- Bulatan progres untuk setiap langkah wirid, berserta nota **fadhilat** dan sumber hadisnya
+- **Asmaul Husna**: 99 Nama Allah dengan maksud, satu nama setiap sentuhan
+
+**Statistik**
+- Hari ini, hari berturut-turut (streak), hari terbaik dan jumlah keseluruhan
+- Sasaran harian dengan bar kemajuan
+- Carta aktiviti 7 hari dan 30 hari
+- Senarai zikir paling kerap dibaca
+- Kongsi pencapaian
+
+**Tetapan**
+- Bahasa Melayu (utama) dan English
+- Tema cerah, gelap atau auto, dengan 4 pilihan warna
+- 3 bunyi sentuhan (atau senyap) dan getaran
 
 **Data**
-- Saves automatically in the browser (localStorage)
-- Export and import a backup file to move to another device
-- **Installable (PWA)** and works fully offline after the first visit
+- Simpan automatik dalam peranti
+- Eksport dan import fail sandaran
+- Boleh dipasang (PWA) dan berfungsi tanpa internet
 
-## Run it
+## Aplikasi Android (APK)
 
-There is nothing to build.
+Setiap kali kod di-push ke `main`, GitHub Actions akan membina APK secara automatik (aplikasi dibungkus dengan [Capacitor](https://capacitorjs.com)).
 
-- **Quickest:** open `index.html` in any browser.
-- **With offline/install support** (needs a web server):
+- **Muat turun:** halaman **Releases**, ambil `zikra.apk` daripada keluaran *latest*.
+- **Pasang:** buka fail itu di telefon Android dan benarkan "pasang aplikasi tidak diketahui" bila ditanya.
+- APK baharu akan mengemas kini aplikasi sedia ada tanpa perlu nyahpasang.
+- Ini binaan *debug* untuk dipasang terus. Untuk Google Play, perlu binaan *release* yang ditandatangani.
+
+## Jalankan sendiri
+
+Tiada proses build untuk versi web.
+
+- **Paling mudah:** buka `index.html` dalam mana-mana pelayar.
+- **Dengan sokongan luar talian / pasang** (perlukan pelayan web):
   ```bash
   npx serve .
-  # or
+  # atau
   python -m http.server 8000
   ```
 
-## Deploy
+**GitHub Pages:** repo → **Settings** → **Pages** → *Deploy from a branch* → `main`, `/ (root)` → **Save**.
 
-**GitHub Pages**
-1. Go to the repo → **Settings** → **Pages**
-2. Under *Source*, choose **Deploy from a branch**, then `main` and `/ (root)`
-3. Save. The site appears at `https://<username>.github.io/<repo-name>/`
-
-**Vercel / Netlify**
-Import the repo, keep the default settings (no build command, output directory = root) and deploy.
-
-## Android app (APK)
-
-Every push to `main` builds an Android APK automatically with GitHub Actions (the app is wrapped with [Capacitor](https://capacitorjs.com)).
-
-- **Download:** open the repo's **Releases** page and get `tasbih-digital.apk` from the *latest* release. It is also attached to each run under the **Actions** tab.
-- **Install:** open the file on an Android phone and allow "install unknown apps" when asked.
-- This is a debug build for installing directly. Publishing on Google Play needs a signed release build.
-
-## Project structure
+## Struktur projek
 
 ```
 tasbih-digital/
-├── index.html            # the whole app: HTML, CSS and JavaScript
-├── sw.js                 # service worker for offline use
-├── manifest.webmanifest  # makes the app installable
-├── icon.svg, icon-192.png, icon-512.png
-├── package.json, capacitor.config.json, scripts/, assets/   # Android wrapper
-├── .github/workflows/build-apk.yml                          # builds the APK
+├── index.html            # keseluruhan aplikasi: HTML, CSS dan JavaScript
+├── sw.js                 # service worker untuk guna tanpa internet
+├── manifest.webmanifest  # menjadikan aplikasi boleh dipasang
+├── icon.svg, icon-192.png, icon-512.png   # logo Zikra
+├── package.json, capacitor.config.json, scripts/, assets/   # pembungkus Android
+├── keystore/debug.keystore                                   # kunci tandatangan APK debug
+├── .github/workflows/build-apk.yml                           # membina APK
 ├── README.md
 ├── LICENSE
 └── .gitignore
 ```
 
-## Tech
+## Sumber
 
-Plain HTML, CSS and JavaScript. No framework and no dependencies, just Google Fonts (Amiri for Arabic, Plus Jakarta Sans for the UI).
+Teks zikir, Asmaul Husna dan terjemahannya disediakan dengan teliti, tetapi sila semak dengan guru atau pihak berautoriti agama sebelum diedarkan secara meluas. Nota fadhilat merujuk kepada Sahih Muslim no. 596 dan 597.
 
-## Ideas for later
-
-- [ ] Prayer times and reminders
-- [ ] Morning and evening adhkar with full text
-- [ ] Sync between devices
-
-## License
+## Lesen
 
 [MIT](LICENSE) © 2026 Irsyad

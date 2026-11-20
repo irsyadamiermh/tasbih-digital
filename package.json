@@ -1,8 +1,8 @@
 {
-  "name": "tasbih-digital",
-  "version": "2.0.0",
+  "name": "zikra",
+  "version": "3.0.0",
   "private": true,
-  "description": "Tasbih Digital - Android wrapper (Capacitor). The web app itself is index.html and needs no build.",
+  "description": "Zikra - tasbih digital. Pembungkus Android (Capacitor); aplikasi web itu sendiri ialah index.html.",
   "scripts": {
     "build:web": "node scripts/copy-web.js"
   },

@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="ms">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tasbih Digital</title>
-<meta name="description" content="A complete digital tasbih: dhikr library, custom dhikr, wirid routines, Asmaul Husna, streaks and stats. Works offline.">
+<title>Zikra</title>
+<meta name="description" content="Zikra: tasbih digital lengkap. Koleksi zikir, wirid selepas solat, Asmaul Husna, statistik dan streak. Boleh guna tanpa internet.">
 <meta name="theme-color" content="#0a1f1b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tasbih">
+<meta name="apple-mobile-web-app-title" content="Zikra">
 <script>
 (function(){try{var s=JSON.parse(localStorage.getItem("tasbih-digital-v2")||"{}"),th=s.theme||"auto";if(th==="auto")th=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";var r=document.documentElement;r.dataset.theme=th;r.dataset.accent=s.accent||"emerald";}catch(e){}})();
 </script>
@@ -64,8 +64,10 @@
 
   .top { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
-  .brand svg { color: var(--gold); width: 22px; height: 22px; }
-  .brand .dim { color: var(--muted); font-weight: 500; }
+  .brand-logo { width: 32px; height: 32px; border-radius: 9px; display: block; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
+  .brand-name { display: flex; flex-direction: column; line-height: 1.05; }
+  .brand-name b { font-size: 19px; font-weight: 800; letter-spacing: .3px; }
+  .brand-name small { font-family: "Amiri", serif; font-size: 13px; font-weight: 700; color: var(--gold); }
   .top-right { display: flex; align-items: center; gap: 8px; }
   .streak { display: inline-flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-weight: 800; font-size: 14px; color: var(--gold); }
   .streak svg { width: 16px; height: 16px; }
@@ -273,8 +275,8 @@
 <main class="app">
   <header class="top hide-focus">
     <div class="brand">
-      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13.5A8.5 8.5 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z"/><path d="m18 3 .7 1.6L20.3 5l-1.6.7L18 7.3l-.7-1.6L15.7 5l1.6-.4z"/></svg>
-      <span>Tasbih<span class="dim"> Digital</span></span>
+      <img class="brand-logo" src="icon.svg" alt="">
+      <span class="brand-name"><b>Zikra</b><small lang="ar">ذِكْرَى</small></span>
     </div>
     <div class="top-right">
       <span class="streak" id="streakPill" title=""><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1.500.500-2.500 1.500-3.500C9.500 10 11 8 12 3z"/><path d="M12 21a7 7 0 0 0 7-7c0-2-1-4-2-5"/><path d="M5 14a7 7 0 0 0 7 7"/></svg><span id="streakN">0</span></span>
@@ -467,7 +469,7 @@ const T = {
     namesDesc: "The 99 Names of Allah. Each tap moves to the next name. Tap any name below to start from there.",
     goal: "Daily goal", streak: "Day streak", best: "Best day", allTime: "All time", last7: "7 days", last30: "30 days", activity: "Activity",
     breakdown: "Most recited", noData: "Start counting to see your stats here.", share: "Share progress",
-    shareText: (n, s) => `Alhamdulillah, ${n} dhikr today${s > 1 ? ` and a ${s}-day streak` : ""} with Tasbih Digital.`, copied: "Copied to clipboard",
+    shareText: (n, s) => `Alhamdulillah, ${n} dhikr today${s > 1 ? ` and a ${s}-day streak` : ""} with Zikra.`, copied: "Copied to clipboard",
     language: "Language", theme: "Theme", auto: "Auto", light: "Light", dark: "Dark", colour: "Colour",
     sound: "Tap sound", sBead: "Bead", sClick: "Click", sSoft: "Soft", off: "Off", vibration: "Vibration",
     awake: "Keep screen on", awakeSub: "Stops the screen sleeping while you count", goalSub: n => `${n} dhikr a day`, change: "Change",
@@ -500,7 +502,7 @@ const T = {
     namesDesc: "99 Nama Allah. Setiap sentuhan beralih ke nama seterusnya. Sentuh mana-mana nama di bawah untuk mula dari situ.",
     goal: "Sasaran harian", streak: "Hari berturut", best: "Hari terbaik", allTime: "Keseluruhan", last7: "7 hari", last30: "30 hari", activity: "Aktiviti",
     breakdown: "Paling kerap dibaca", noData: "Mula berzikir untuk melihat statistik di sini.", share: "Kongsi pencapaian",
-    shareText: (n, s) => `Alhamdulillah, ${n} zikir hari ini${s > 1 ? ` dan ${s} hari berturut-turut` : ""} dengan Tasbih Digital.`, copied: "Disalin",
+    shareText: (n, s) => `Alhamdulillah, ${n} zikir hari ini${s > 1 ? ` dan ${s} hari berturut-turut` : ""} dengan aplikasi Zikra.`, copied: "Disalin",
     language: "Bahasa", theme: "Tema", auto: "Auto", light: "Cerah", dark: "Gelap", colour: "Warna",
     sound: "Bunyi sentuhan", sBead: "Manik", sClick: "Klik", sSoft: "Lembut", off: "Tutup", vibration: "Getaran",
     awake: "Skrin sentiasa hidup", awakeSub: "Elak skrin tidur semasa berzikir", goalSub: n => `${n} zikir sehari`, change: "Tukar",
@@ -528,7 +530,7 @@ const pad = n => String(n).padStart(2, "0");
 const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 const defaults = () => ({
-  v: 2, lang: (navigator.language || "").toLowerCase().startsWith("ms") ? "ms" : "en",
+  v: 2, lang: "ms", zikra: 1,
   theme: "auto", accent: "emerald", sound: "bead", vibrate: true, awake: false, dailyGoal: 300,
   active: { type: "dhikr", id: "subhanallah" }, targets: {}, counts: {}, custom: [], routines: [],
   history: {}, totals: {}, lifetime: 0, libTab: "dhikr", chartDays: 7
@@ -539,7 +541,8 @@ function clean(o) {
   for (const k of ["targets", "counts", "history", "totals"]) if (!s[k] || typeof s[k] !== "object") s[k] = {};
   for (const k of ["custom", "routines"]) if (!Array.isArray(s[k])) s[k] = [];
   if (!s.active || !s.active.type) s.active = { type: "dhikr", id: "subhanallah" };
-  if (!T[s.lang]) s.lang = "en";
+  if (!(o && o.zikra)) { s.lang = "ms"; s.zikra = 1; } // Zikra: Bahasa Melayu jadi bahasa utama (sekali sahaja)
+  if (!T[s.lang]) s.lang = "ms";
   if (!ACCENTS[s.accent]) s.accent = "emerald";
   s.dailyGoal = Math.max(1, Math.floor(Number(s.dailyGoal) || 300));
   return s;
@@ -566,7 +569,7 @@ let S = load();
 let view = "counter", focusMode = false, advanceTimer = null, lastCard = null;
 const undoStack = [];
 
-const t = (k, ...a) => { const v = (T[S.lang] || T.en)[k]; return typeof v === "function" ? v(...a) : (v == null ? k : v); };
+const t = (k, ...a) => { const v = (T[S.lang] || T.ms)[k]; return typeof v === "function" ? v(...a) : (v == null ? k : v); };
 const allDhikr = () => DHIKR.concat(S.custom);
 const findDhikr = id => allDhikr().find(d => d.id === id);
 const dh = id => findDhikr(id) || DHIKR[0];
@@ -908,7 +911,7 @@ function renderSettings() {
         <button class="pill danger" data-act="resetAll">${esc(t("resetAll"))}</button>
       </div>
     </div>
-    <p class="note">${esc(t("dataNote"))}<br>Tasbih Digital v2.1</p>`;
+    <p class="note">${esc(t("dataNote"))}<br>Zikra v3.0</p>`;
 }
 
 // ---------------------------------------------------------------- render: shell
@@ -1010,7 +1013,7 @@ $("rSteps").addEventListener("change", e => {
 function exportData() {
   const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = `tasbih-backup-${dayKey()}.json`;
+  a.href = URL.createObjectURL(blob); a.download = `zikra-sandaran-${dayKey()}.json`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 $("importFile").addEventListener("change", async e => {
